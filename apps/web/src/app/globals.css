@@ -1,1 +1,55 @@
 @import "tailwindcss";
+
+@theme {
+  /* ─── Typography ─────────────────────────────────────────────────── */
+  --font-sans: var(--font-plus-jakarta), 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* ─── Warm Stone (neutral base, barely warm) ─────────────────────── */
+  --color-stone-50:  #FAFAF8;
+  --color-stone-100: #F4F2EE;
+  --color-stone-200: #EAE6DF;
+  --color-stone-300: #D8D2C9;
+  --color-stone-400: #B5ADA3;
+  --color-stone-500: #8C837A;
+  --color-stone-600: #635C54;
+  --color-stone-700: #312D29;  /* dark border / divider       */
+  --color-stone-800: #1E1C19;  /* dark card / surface          */
+  --color-stone-900: #131110;  /* dark page background         */
+  --color-stone-950: #0C0B0A;  /* dark deepest bg / sidebar    */
+
+  /* ─── Accent (terracota / Anthropic-orange) ──────────────────────── */
+  --color-accent-50:  #FEF3EC;
+  --color-accent-100: #FBE0CC;
+  --color-accent-200: #F6BE99;
+  --color-accent-300: #EE9567;
+  --color-accent-400: #E07042;
+  --color-accent-500: #C95829;
+  --color-accent-600: #A3431C;
+  --color-accent-700: #7A3011;
+  --color-accent-900: #351105;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-stone-50);
+    color: var(--color-stone-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-200);
+    color: var(--color-accent-700);
+  }
+}

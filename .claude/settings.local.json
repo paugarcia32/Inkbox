@@ -16,7 +16,10 @@
       "Read(//c/Users/Pau/AppData/Local/pnpm//**)",
       "Read(//c/Users/Pau/**)",
       "Bash(\"/c/Users/Pau/AppData/Local/pnpm/.tools/@pnpm+win-x64/10.15.1_tmp_3604/bin/pnpm\" --version)",
-      "Bash(\"$PNPM\" add --filter @inkbox/web tailwindcss @tailwindcss/postcss postcss)"
+      "Bash(\"$PNPM\" add --filter @inkbox/web tailwindcss @tailwindcss/postcss postcss)",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"reading inbox productivity warm minimal\" --design-system -p \"Inkbox\")",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"reading inbox productivity warm minimal\" --design-system -p \"Inkbox\")",
+      "Bash(pnpm add @heroicons/react --filter @inkbox/web)"
     ]
   }
 }

@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@inkbox/types": "workspace:*",
     "@inkbox/ui": "workspace:*",
     "@tailwindcss/postcss": "^4.2.1",
