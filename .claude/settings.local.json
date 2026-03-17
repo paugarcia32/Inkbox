@@ -37,7 +37,10 @@
       "Bash(pnpm biome check --write apps/web/src/app/\\\\\\(app\\\\\\)/inbox/page.tsx package.json)",
       "WebFetch(domain:biomejs.dev)",
       "WebFetch(domain:zed.dev)",
-      "Bash(cat \"C:/Users/Pau/dev/inkbox/apps/web/src/app/\\(app\\)/settings/page.tsx\")"
+      "Bash(cat \"C:/Users/Pau/dev/inkbox/apps/web/src/app/\\(app\\)/settings/page.tsx\")",
+      "Bash(find /c/Users/Pau/dev/inkbox/packages -type f -name *.ts)",
+      "Bash(find /c/Users/Pau/dev/inkbox/apps/api/src -type f -name *.ts)",
+      "Bash(xargs grep:*)"
     ]
   }
 }

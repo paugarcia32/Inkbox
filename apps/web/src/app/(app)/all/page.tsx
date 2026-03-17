@@ -1,15 +1,80 @@
 'use client';
 
 import { BottomUrlBar } from '@/components/bottom-url-bar';
+import { FilterBar } from '@/components/filter-bar';
+import type { GroupBy, SortOption, TypeFilter } from '@/components/filter-bar';
 import { ItemDetailPanel } from '@/components/item-detail-panel';
 import { ItemRow } from '@/components/item-row';
 import { trpc } from '@/lib/trpc';
 import type { Item } from '@inkbox/types';
-import { SquaresPlusIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { ChevronRightIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
+import { useMemo, useState } from 'react';
+
+type Group = { key: string; label: string; items: Item[] };
+
+function getDateBucket(dateStr: string): string {
+  const itemDate = new Date(dateStr);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today.getTime() - 86_400_000);
+  const weekStart = new Date(today.getTime() - today.getDay() * 86_400_000);
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const itemDay = new Date(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate());
+
+  if (itemDay >= today) return 'Today';
+  if (itemDay >= yesterday) return 'Yesterday';
+  if (itemDay >= weekStart) return 'This week';
+  if (itemDay >= monthStart) return 'This month';
+  return 'Older';
+}
+
+const DATE_BUCKET_ORDER = ['Today', 'Yesterday', 'This week', 'This month', 'Older'];
+
+function buildGroups(items: Item[], groupBy: GroupBy): Group[] {
+  if (groupBy === 'date') {
+    const map = new Map<string, Item[]>();
+    for (const item of items) {
+      const bucket = getDateBucket(item.createdAt);
+      if (!map.has(bucket)) map.set(bucket, []);
+      map.get(bucket)!.push(item);
+    }
+    return DATE_BUCKET_ORDER.filter((b) => map.has(b)).map((b) => ({
+      key: b,
+      label: b,
+      items: map.get(b)!,
+    }));
+  }
+
+  if (groupBy === 'collection') {
+    const map = new Map<string, { label: string; items: Item[] }>();
+    for (const item of items) {
+      const col = item.collections?.[0];
+      const key = col ? col.collectionId : '__none__';
+      const label = col ? col.collectionName : 'No collection';
+      if (!map.has(key)) map.set(key, { label, items: [] });
+      map.get(key)!.items.push(item);
+    }
+    const groups: Group[] = [];
+    for (const [key, { label, items: groupItems }] of map) {
+      if (key !== '__none__') groups.push({ key, label, items: groupItems });
+    }
+    groups.sort((a, b) => a.label.localeCompare(b.label));
+    if (map.has('__none__')) {
+      groups.push({ key: '__none__', label: 'No collection', items: map.get('__none__')!.items });
+    }
+    return groups;
+  }
+
+  return [];
+}
 
 export default function AllPage() {
   const [showArchived, setShowArchived] = useState(false);
+  const [sort, setSort] = useState<SortOption>('date-desc');
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
+  const [groupBy, setGroupBy] = useState<GroupBy>('none');
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+
   const { data, isLoading, isError, refetch } = trpc.items.list.useQuery(
     { includeArchived: showArchived || undefined },
     {
@@ -24,34 +89,52 @@ export default function AllPage() {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
+  const items = useMemo(() => {
+    let result = data?.items ?? [];
+    if (typeFilter !== 'all') {
+      result = result.filter((item) => item.type === typeFilter);
+    }
+    return [...result].sort((a, b) => {
+      if (sort === 'date-desc') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sort === 'date-asc') return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      const ta = (a.title?.trim() || a.url).toLowerCase();
+      const tb = (b.title?.trim() || b.url).toLowerCase();
+      return sort === 'alpha-asc' ? ta.localeCompare(tb) : tb.localeCompare(ta);
+    });
+  }, [data?.items, sort, typeFilter]);
+
+  const groups = useMemo(
+    () => (groupBy !== 'none' ? buildGroups(items, groupBy) : null),
+    [items, groupBy],
+  );
+
+  function toggleGroup(key: string) {
+    setCollapsedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  function handleGroupByChange(v: GroupBy) {
+    setGroupBy(v);
+    setCollapsedGroups(new Set());
+  }
+
   return (
     <>
       <div className="mx-auto max-w-3xl px-4 pt-4 pb-20">
-        {/* Filter bar */}
-        <div className="mb-3 flex items-center justify-end">
-          <label className="flex cursor-pointer items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
-            <span>Show archived</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={showArchived}
-              onClick={() => setShowArchived((v) => !v)}
-              className={[
-                'relative inline-flex h-4 w-7 shrink-0 items-center rounded-full transition-colors duration-150',
-                showArchived
-                  ? 'bg-accent-500'
-                  : 'bg-stone-200 dark:bg-stone-700',
-              ].join(' ')}
-            >
-              <span
-                className={[
-                  'inline-block size-3 rounded-full bg-white shadow transition-transform duration-150',
-                  showArchived ? 'translate-x-3.5' : 'translate-x-0.5',
-                ].join(' ')}
-              />
-            </button>
-          </label>
-        </div>
+        <FilterBar
+          sort={sort}
+          onSortChange={setSort}
+          typeFilter={typeFilter}
+          onTypeFilterChange={setTypeFilter}
+          groupBy={groupBy}
+          onGroupByChange={handleGroupByChange}
+          showArchived={showArchived}
+          onToggleArchived={() => setShowArchived((v) => !v)}
+        />
 
         {isLoading && (
           <ul className="space-y-0.5">
@@ -74,7 +157,7 @@ export default function AllPage() {
           </div>
         )}
 
-        {data && data.items.length === 0 && (
+        {data && items.length === 0 && !isLoading && (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <SquaresPlusIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
             <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
@@ -86,9 +169,9 @@ export default function AllPage() {
           </div>
         )}
 
-        {data && data.items.length > 0 && (
+        {items.length > 0 && !groups && (
           <ul className="space-y-0.5">
-            {data.items.map((item) => (
+            {items.map((item) => (
               <ItemRow
                 key={item.id}
                 item={item}
@@ -99,6 +182,54 @@ export default function AllPage() {
               />
             ))}
           </ul>
+        )}
+
+        {groups && groups.length > 0 && (
+          <div className="space-y-1">
+            {groups.map((group) => {
+              const collapsed = collapsedGroups.has(group.key);
+              return (
+                <div key={group.key}>
+                  {/* Group header */}
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(group.key)}
+                    className="flex w-full items-center gap-1.5 py-1.5 text-left"
+                  >
+                    <ChevronRightIcon
+                      className={[
+                        'size-3 shrink-0 text-stone-400 transition-transform duration-150',
+                        collapsed ? '' : 'rotate-90',
+                      ].join(' ')}
+                    />
+                    <span className="text-xs font-medium text-stone-500 dark:text-stone-400">
+                      {group.label}
+                    </span>
+                    <div className="mx-2 h-px flex-1 bg-stone-200 dark:bg-stone-700" />
+                    <span className="text-xs tabular-nums text-stone-400 dark:text-stone-500">
+                      {group.items.length}
+                    </span>
+                  </button>
+
+                  {/* Group items */}
+                  {!collapsed && (
+                    <ul className="space-y-0.5">
+                      {group.items.map((item) => (
+                        <ItemRow
+                          key={item.id}
+                          item={item}
+                          showCollection={groupBy !== 'collection'}
+                          onOpen={setSelectedItem}
+                          hoveredId={hoveredId}
+                          onHoverChange={setHoveredId}
+                        />
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 

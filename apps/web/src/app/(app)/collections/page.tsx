@@ -327,7 +327,7 @@ export default function CollectionsPage() {
             {data.collections.map((collection) => (
               <li
                 key={collection.id}
-                className="group relative flex h-10 items-center gap-3 rounded-lg px-2 transition-all duration-200 ease-out hover:translate-x-0.5 hover:bg-stone-100/70 dark:hover:bg-stone-800/60"
+                className="group relative flex h-10 items-center gap-3 rounded-lg px-2 transition-all duration-200 ease-out hover:bg-stone-100/70 dark:hover:bg-stone-800/60"
               >
                 {/* Full-row link */}
                 <Link
@@ -336,39 +336,41 @@ export default function CollectionsPage() {
                   aria-label={collection.name}
                 />
 
-                {/* Color dot */}
-                <span
-                  className="size-2 shrink-0 rounded-full"
-                  style={{ background: getColorHex(collection.color) }}
-                />
+                <div className="pointer-events-none relative flex h-10 w-full items-center gap-3 transition-transform duration-200 ease-out group-hover:translate-x-0.5">
+                  {/* Action buttons — left side, shown on hover */}
+                  <div className="pointer-events-auto relative flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                    <button
+                      type="button"
+                      title="Edit collection"
+                      onClick={(e) => { e.preventDefault(); setEditingCollection(collection); }}
+                      className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-200/60 hover:text-stone-600 dark:hover:bg-stone-700/60 dark:hover:text-stone-300"
+                    >
+                      <PencilIcon className="size-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      title="Delete collection"
+                      disabled={deleteEmpty.isPending}
+                      onClick={(e) => { e.preventDefault(); handleDeleteClick(collection); }}
+                      className="rounded p-1 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-30 dark:hover:bg-red-950/40 dark:hover:text-red-400"
+                    >
+                      <TrashIcon className="size-3.5" />
+                    </button>
+                  </div>
 
-                <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-800 dark:text-stone-100">
-                  {collection.name}
-                </span>
+                  {/* Color dot */}
+                  <span
+                    className="size-2 shrink-0 rounded-full"
+                    style={{ background: getColorHex(collection.color) }}
+                  />
 
-                <span className="shrink-0 text-xs text-stone-400 dark:text-stone-500">
-                  {collection.itemCount}
-                </span>
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-800 dark:text-stone-100">
+                    {collection.name}
+                  </span>
 
-                {/* Action buttons — relative keeps them above the link */}
-                <div className="relative flex items-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                  <button
-                    type="button"
-                    title="Edit collection"
-                    onClick={(e) => { e.preventDefault(); setEditingCollection(collection); }}
-                    className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-200/60 hover:text-stone-600 dark:hover:bg-stone-700/60 dark:hover:text-stone-300"
-                  >
-                    <PencilIcon className="size-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    title="Delete collection"
-                    disabled={deleteEmpty.isPending}
-                    onClick={(e) => { e.preventDefault(); handleDeleteClick(collection); }}
-                    className="rounded p-1 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-30 dark:hover:bg-red-950/40 dark:hover:text-red-400"
-                  >
-                    <TrashIcon className="size-3.5" />
-                  </button>
+                  <span className="shrink-0 text-xs text-stone-400 dark:text-stone-500">
+                    {collection.itemCount}
+                  </span>
                 </div>
               </li>
             ))}
