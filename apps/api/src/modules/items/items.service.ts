@@ -29,6 +29,13 @@ export class ItemsService {
     const item = await this.prisma.item.create({
       data: { userId, url: input.url },
     });
+
+    if (input.collectionId) {
+      await this.prisma.collectionItem.create({
+        data: { itemId: item.id, collectionId: input.collectionId },
+      });
+    }
+
     void this.scrapeAndUpdate(item.id, input.url);
     return item;
   }

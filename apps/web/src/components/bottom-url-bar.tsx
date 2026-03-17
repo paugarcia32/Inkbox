@@ -4,7 +4,16 @@ import { usePasteHandler } from '@/lib/use-paste-handler';
 import { trpc } from '@/lib/trpc';
 import { useEffect, useRef, useState } from 'react';
 
-export function BottomUrlBar() {
+interface BottomUrlBarProps {
+  /** If set, newly created items are immediately added to this collection. */
+  collectionId?: string;
+  /** Used in the success toast: "Saved to [name]". Falls back to "Saved!" if absent. */
+  collectionName?: string;
+  /** When true (archive page), success toast reads "Saved to Inbox" instead of "Saved!". */
+  inboxOnlyMessage?: boolean;
+}
+
+export function BottomUrlBar({ collectionId, collectionName, inboxOnlyMessage }: BottomUrlBarProps) {
   const [url, setUrl] = useState('');
   const [toast, setToast] = useState<'saved' | 'error' | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -15,6 +24,10 @@ export function BottomUrlBar() {
       setUrl('');
       setToast('saved');
       void utils.items.list.invalidate();
+      // Also refresh the specific collection's item list if we saved into one
+      if (collectionId) {
+        void utils.collections.getById.invalidate({ id: collectionId });
+      }
     },
     onError: () => setToast('error'),
   });
@@ -31,7 +44,7 @@ export function BottomUrlBar() {
     if (!trimmed) return;
     try {
       new URL(trimmed);
-      create.mutate({ url: trimmed });
+      create.mutate({ url: trimmed, collectionId });
     } catch {
       setToast('error');
     }
@@ -40,6 +53,13 @@ export function BottomUrlBar() {
   usePasteHandler((pastedUrl) => {
     submit(pastedUrl);
   });
+
+  // Contextual success message
+  const savedMessage = inboxOnlyMessage
+    ? 'Saved to Inbox'
+    : collectionName
+      ? `Saved to ${collectionName}`
+      : 'Saved!';
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-stone-200 bg-stone-50/90 backdrop-blur-sm dark:border-stone-800 dark:bg-stone-900/90">
@@ -70,7 +90,7 @@ export function BottomUrlBar() {
               : 'bg-red-500 text-white'
           }`}
         >
-          {toast === 'saved' ? 'Saved!' : 'Invalid URL'}
+          {toast === 'saved' ? savedMessage : 'Invalid URL'}
         </div>
       )}
     </div>

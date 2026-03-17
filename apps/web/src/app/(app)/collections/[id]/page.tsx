@@ -124,7 +124,7 @@ export default function CollectionDetailPage({
           onTypeFilterChange={setTypeFilter}
         />
 
-        {isError && (
+        {isError ? (
           <div className="flex flex-col items-center gap-2 py-16 text-center">
             <p className="text-sm text-stone-500 dark:text-stone-400">Failed to load items.</p>
             <button
@@ -135,8 +135,7 @@ export default function CollectionDetailPage({
               Try again
             </button>
           </div>
-        )}
-
+        ) : (
         <ItemsSection isLoading={isLoading} isFetching={isFetching}>
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -163,10 +162,11 @@ export default function CollectionDetailPage({
             </ul>
           )}
         </ItemsSection>
+        )}
       </div>
 
       <ItemDetailPanel item={selectedItem} onClose={() => setSelectedItem(null)} />
-      <BottomUrlBar />
+      <BottomUrlBar collectionId={id} collectionName={collection?.name} />
     </>
   );
 }

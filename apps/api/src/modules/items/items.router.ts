@@ -26,7 +26,7 @@ export class ItemsRouter {
         .query(({ ctx, input }) => this.items.findAll(ctx.userId, input)),
 
       create: this.trpc.protectedProcedure
-        .input(z.object({ url: z.string().url() }))
+        .input(z.object({ url: z.string().url(), collectionId: z.string().optional() }))
         .mutation(({ ctx, input }) => this.items.create(ctx.userId, input)),
 
       archive: this.trpc.protectedProcedure

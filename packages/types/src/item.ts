@@ -31,4 +31,5 @@ export type Item = Timestamp & {
 
 export type CreateItemInput = {
   url: string;
+  collectionId?: string | undefined;
 };
