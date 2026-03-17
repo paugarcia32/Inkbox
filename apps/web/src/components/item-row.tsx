@@ -58,7 +58,7 @@ function ItemHoverCard({ item, top, left }: HoverCardProps) {
 
       <div className="p-3">
         <p className="text-xs font-semibold leading-snug text-stone-800 line-clamp-2 dark:text-stone-100">
-          {item.title ?? getHostname(item.url)}
+          {item.title?.trim() || getHostname(item.url)}
         </p>
 
         {item.description && (
@@ -226,13 +226,9 @@ export function ItemRow({
           onClick={(e) => e.stopPropagation()}
           className="min-w-0 flex-1 truncate text-sm"
         >
-          {item.title ? (
-            <span className="font-medium text-stone-800 hover:underline dark:text-stone-100">
-              {item.title}
-            </span>
-          ) : (
-            <span className="text-stone-400 dark:text-stone-500">{hostname}</span>
-          )}
+          <span className="font-medium text-stone-800 hover:underline dark:text-stone-100">
+            {item.title?.trim() || hostname}
+          </span>
         </a>
 
         {/* Domain */}

@@ -9,7 +9,17 @@ import { InboxArrowDownIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
 export default function InboxPage() {
-  const { data, isLoading, isError, refetch } = trpc.items.list.useQuery({ inboxOnly: true });
+  const { data, isLoading, isError, refetch } = trpc.items.list.useQuery(
+    { inboxOnly: true },
+    {
+      refetchInterval: (query) =>
+        query.state.data?.items.some(
+          (item) => item.status === 'pending' || item.status === 'processing',
+        )
+          ? 2000
+          : false,
+    },
+  );
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 

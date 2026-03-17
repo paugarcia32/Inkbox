@@ -17,7 +17,17 @@ export default function CollectionDetailPage({
 }) {
   const { id } = use(params);
   const { data: collection } = trpc.collections.getById.useQuery({ id });
-  const { data, isLoading, isError, refetch } = trpc.items.list.useQuery({ collectionId: id });
+  const { data, isLoading, isError, refetch } = trpc.items.list.useQuery(
+    { collectionId: id },
+    {
+      refetchInterval: (query) =>
+        query.state.data?.items.some(
+          (item) => item.status === 'pending' || item.status === 'processing',
+        )
+          ? 2000
+          : false,
+    },
+  );
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 

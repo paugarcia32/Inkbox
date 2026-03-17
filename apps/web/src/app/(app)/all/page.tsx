@@ -10,9 +10,17 @@ import { useState } from 'react';
 
 export default function AllPage() {
   const [showArchived, setShowArchived] = useState(false);
-  const { data, isLoading, isError, refetch } = trpc.items.list.useQuery({
-    includeArchived: showArchived || undefined,
-  });
+  const { data, isLoading, isError, refetch } = trpc.items.list.useQuery(
+    { includeArchived: showArchived || undefined },
+    {
+      refetchInterval: (query) =>
+        query.state.data?.items.some(
+          (item) => item.status === 'pending' || item.status === 'processing',
+        )
+          ? 2000
+          : false,
+    },
+  );
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 

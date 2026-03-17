@@ -159,6 +159,7 @@ enum ContentType {
   youtube
   tweet
   link
+  pinterest
 }
 
 enum ItemStatus {
