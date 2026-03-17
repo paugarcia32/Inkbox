@@ -1,6 +1,8 @@
 'use client';
 
+import { CollectionListSkeleton } from '@/components/collection-list-skeleton';
 import { IconPicker } from '@/components/icon-picker';
+import { ItemsSection } from '@/components/items-section';
 import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
 import type { Collection } from '@inkbox/types';
@@ -295,14 +297,6 @@ export default function CollectionsPage() {
           </button>
         </div>
 
-        {isLoading && (
-          <ul className="space-y-0.5">
-            {['sk-1', 'sk-2', 'sk-3'].map((id) => (
-              <li key={id} className="h-10 animate-pulse rounded-lg bg-stone-100 dark:bg-stone-800" />
-            ))}
-          </ul>
-        )}
-
         {isError && (
           <div className="flex flex-col items-center gap-2 py-16 text-center">
             <p className="text-sm text-stone-500 dark:text-stone-400">Failed to load collections.</p>
@@ -316,29 +310,28 @@ export default function CollectionsPage() {
           </div>
         )}
 
-        {data && data.collections.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <FolderIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
-            <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
-              No collections yet
-            </p>
-            <p className="mt-1 text-xs text-stone-400 dark:text-stone-600">
-              Create a collection to organize your saved links
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowCreate(true)}
-              className="mt-4 flex items-center gap-1.5 rounded-lg bg-accent-500 px-3.5 py-2 text-xs font-medium text-white transition-colors hover:bg-accent-600"
-            >
-              <PlusIcon className="size-3.5" />
-              New collection
-            </button>
-          </div>
-        )}
-
-        {data && data.collections.length > 0 && (
+        <ItemsSection isLoading={isLoading} skeleton={<CollectionListSkeleton />}>
+          {data && data.collections.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <FolderIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
+              <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
+                No collections yet
+              </p>
+              <p className="mt-1 text-xs text-stone-400 dark:text-stone-600">
+                Create a collection to organize your saved links
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowCreate(true)}
+                className="mt-4 flex items-center gap-1.5 rounded-lg bg-accent-500 px-3.5 py-2 text-xs font-medium text-white transition-colors hover:bg-accent-600"
+              >
+                <PlusIcon className="size-3.5" />
+                New collection
+              </button>
+            </div>
+          ) : (
           <ul className="space-y-0.5">
-            {data.collections.map((collection) => (
+            {(data?.collections ?? []).map((collection) => (
               <li
                 key={collection.id}
                 className="group relative flex h-10 items-center gap-3 rounded-lg px-2 transition-all duration-200 ease-out hover:bg-stone-100/70 dark:hover:bg-stone-800/60"
@@ -394,7 +387,8 @@ export default function CollectionsPage() {
               </li>
             ))}
           </ul>
-        )}
+          )}
+        </ItemsSection>
       </div>
 
       {showCreate && <CreateCollectionModal onClose={() => setShowCreate(false)} />}
