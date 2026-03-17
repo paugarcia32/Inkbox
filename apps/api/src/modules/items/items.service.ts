@@ -85,6 +85,7 @@ export class ItemsService {
         collectionId: ci.collectionId,
         collectionName: ci.collection.name,
         collectionColor: ci.collection.color,
+        collectionIcon: ci.collection.icon ?? null,
       })),
     }));
 

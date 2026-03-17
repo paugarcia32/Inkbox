@@ -1,5 +1,6 @@
 'use client';
 
+import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
 import type { Item } from '@inkbox/types';
 import { COLLECTION_COLORS } from '@inkbox/types';
@@ -77,15 +78,15 @@ export function AddToCollectionPopover({ item, onClose }: AddToCollectionPopover
           >
             <span className="flex size-4 shrink-0 items-center justify-center">
               {isIn && <CheckIcon className="size-3.5 text-accent-500" />}
-              {!isIn && (
-                <span
-                  className="size-2 rounded-full"
-                  style={{
-                    background:
-                      COLLECTION_COLORS.find((c) => c.id === collection.color)?.hex ?? '#78716c',
-                  }}
-                />
-              )}
+              {!isIn && (() => {
+                const hex = COLLECTION_COLORS.find((c) => c.id === collection.color)?.hex ?? '#78716c';
+                const IconComp = getCollectionIcon(collection.icon);
+                return IconComp ? (
+                  <IconComp className="size-3.5" style={{ color: hex }} />
+                ) : (
+                  <span className="size-2 rounded-full" style={{ background: hex }} />
+                );
+              })()}
             </span>
             <span className="truncate">{collection.name}</span>
           </button>

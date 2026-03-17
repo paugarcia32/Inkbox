@@ -1,5 +1,7 @@
 'use client';
 
+import { IconPicker } from '@/components/icon-picker';
+import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
 import type { Collection } from '@inkbox/types';
 import { COLLECTION_COLORS } from '@inkbox/types';
@@ -35,6 +37,7 @@ function CreateCollectionModal({ onClose }: { onClose: () => void }) {
   const utils = trpc.useUtils();
   const [name, setName] = useState('');
   const [color, setColor] = useState('stone');
+  const [icon, setIcon] = useState<string | null>(null);
 
   const create = trpc.collections.create.useMutation({
     onSuccess: () => {
@@ -44,7 +47,7 @@ function CreateCollectionModal({ onClose }: { onClose: () => void }) {
   });
 
   function submit() {
-    if (name.trim()) create.mutate({ name: name.trim(), color });
+    if (name.trim()) create.mutate({ name: name.trim(), color, icon });
   }
 
   return (
@@ -74,6 +77,11 @@ function CreateCollectionModal({ onClose }: { onClose: () => void }) {
         />
 
         <ColorPicker value={color} onChange={setColor} />
+
+        <div className="mt-3">
+          <p className="mb-1.5 text-xs text-stone-400 dark:text-stone-500">Icon (optional)</p>
+          <IconPicker value={icon} color={getColorHex(color)} onChange={setIcon} />
+        </div>
 
         <div className="mt-4 flex justify-end gap-2">
           <button
@@ -107,6 +115,7 @@ function EditCollectionModal({
   const utils = trpc.useUtils();
   const [name, setName] = useState(collection.name);
   const [color, setColor] = useState(collection.color);
+  const [icon, setIcon] = useState<string | null>(collection.icon);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -119,7 +128,7 @@ function EditCollectionModal({
   });
 
   function submit() {
-    if (name.trim()) update.mutate({ id: collection.id, name: name.trim(), color });
+    if (name.trim()) update.mutate({ id: collection.id, name: name.trim(), color, icon });
   }
 
   return (
@@ -149,6 +158,11 @@ function EditCollectionModal({
         />
 
         <ColorPicker value={color} onChange={setColor} />
+
+        <div className="mt-3">
+          <p className="mb-1.5 text-xs text-stone-400 dark:text-stone-500">Icon (optional)</p>
+          <IconPicker value={icon} color={getColorHex(color)} onChange={setIcon} />
+        </div>
 
         {error && (
           <p className="mt-2 text-xs text-red-500">{error}</p>
@@ -358,11 +372,16 @@ export default function CollectionsPage() {
                     </button>
                   </div>
 
-                  {/* Color dot */}
-                  <span
-                    className="size-2 shrink-0 rounded-full"
-                    style={{ background: getColorHex(collection.color) }}
-                  />
+                  {/* Color dot or icon */}
+                  {(() => {
+                    const IconComp = getCollectionIcon(collection.icon);
+                    const hex = getColorHex(collection.color);
+                    return IconComp ? (
+                      <IconComp className="size-4 shrink-0" style={{ color: hex }} />
+                    ) : (
+                      <span className="size-2 shrink-0 rounded-full" style={{ background: hex }} />
+                    );
+                  })()}
 
                   <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-800 dark:text-stone-100">
                     {collection.name}

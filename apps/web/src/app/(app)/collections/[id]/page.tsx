@@ -6,6 +6,7 @@ import { FilterBar } from '@/components/filter-bar';
 import type { SortOption, TypeFilter } from '@/components/filter-bar';
 import { ItemDetailPanel } from '@/components/item-detail-panel';
 import { ItemRow } from '@/components/item-row';
+import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
 import type { Item } from '@inkbox/types';
 import { COLLECTION_COLORS } from '@inkbox/types';
@@ -74,20 +75,24 @@ export default function CollectionDetailPage({
             <ArrowLeftIcon className="size-4" />
           </Link>
 
-          {collection && (
-            <>
-              <span
-                className="size-2.5 shrink-0 rounded-full"
-                style={{ background: colorHex }}
-              />
-              <h1 className="text-sm font-semibold text-stone-800 dark:text-stone-100">
-                {collection.name}
-              </h1>
-              <span className="text-xs text-stone-400 dark:text-stone-500">
-                {collection.itemCount}
-              </span>
-            </>
-          )}
+          {collection && (() => {
+            const IconComp = getCollectionIcon(collection.icon);
+            return (
+              <>
+                {IconComp ? (
+                  <IconComp className="size-4 shrink-0" style={{ color: colorHex }} />
+                ) : (
+                  <span className="size-2.5 shrink-0 rounded-full" style={{ background: colorHex }} />
+                )}
+                <h1 className="text-sm font-semibold text-stone-800 dark:text-stone-100">
+                  {collection.name}
+                </h1>
+                <span className="text-xs text-stone-400 dark:text-stone-500">
+                  {collection.itemCount}
+                </span>
+              </>
+            );
+          })()}
 
           {/* Add items button */}
           <div ref={addBtnRef} className="relative ml-auto">

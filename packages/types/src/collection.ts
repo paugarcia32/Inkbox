@@ -26,6 +26,7 @@ export type Collection = Timestamp & {
   isPublic: boolean;
   itemCount: number;
   color: string;
+  icon: string | null;
 };
 
 export type CollectionWithItems = Collection & {

@@ -34,24 +34,26 @@ export class CollectionsService {
     return { ...rest, itemCount: _count.items };
   }
 
-  async create(userId: string, data: { name: string; description?: string | undefined; color?: string | undefined }) {
+  async create(userId: string, data: { name: string; description?: string | undefined; color?: string | undefined; icon?: string | null | undefined }) {
     return this.prisma.collection.create({
       data: {
         userId,
         name: data.name,
         description: data.description ?? null,
         color: data.color ?? 'stone',
+        icon: data.icon ?? null,
       },
     });
   }
 
-  async update(userId: string, id: string, data: { name?: string | undefined; color?: string | undefined }) {
+  async update(userId: string, id: string, data: { name?: string | undefined; color?: string | undefined; icon?: string | null | undefined }) {
     await this.prisma.collection.findFirstOrThrow({ where: { id, userId } });
     return this.prisma.collection.update({
       where: { id },
       data: {
         ...(data.name !== undefined && { name: data.name }),
         ...(data.color !== undefined && { color: data.color }),
+        ...(data.icon !== undefined && { icon: data.icon }),
       },
     });
   }

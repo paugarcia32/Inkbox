@@ -8,6 +8,7 @@ export type ItemCollection = {
   collectionId: string;
   collectionName: string;
   collectionColor: string;
+  collectionIcon: string | null;
 };
 
 export type Item = Timestamp & {

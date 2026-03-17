@@ -31,6 +31,7 @@ export class CollectionsRouter {
             name: z.string().min(1),
             description: z.string().optional(),
             color: z.string().optional(),
+            icon: z.string().nullable().optional(),
           }),
         )
         .mutation(({ ctx, input }) => this.collections.create(ctx.userId, input)),
@@ -41,10 +42,11 @@ export class CollectionsRouter {
             id: z.string(),
             name: z.string().min(1).optional(),
             color: z.string().optional(),
+            icon: z.string().nullable().optional(),
           }),
         )
         .mutation(({ ctx, input }) =>
-          this.collections.update(ctx.userId, input.id, { name: input.name, color: input.color }),
+          this.collections.update(ctx.userId, input.id, { name: input.name, color: input.color, icon: input.icon }),
         ),
 
       delete: this.trpc.protectedProcedure

@@ -129,6 +129,7 @@ model Collection {
   name        String
   description String?
   color       String   @default("stone")
+  icon        String?
   shareToken  String?  @unique @default(cuid())
   isPublic    Boolean  @default(false)
   createdAt   DateTime @default(now())

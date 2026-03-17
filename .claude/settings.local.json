@@ -45,7 +45,9 @@
       "Bash(grep -r \"avatar\\\\|upload\\\\|file\" /c/Users/Pau/dev/inkbox/apps/api/src --include=*.ts)",
       "Bash(grep -r \"avatarUrl\\\\|upload\\\\|profile.*photo\" /c/Users/Pau/dev/inkbox/apps/web/src --include=*.ts --include=*.tsx)",
       "Bash(grep -r \"delete.*user\\\\|deleteUser\\\\|deleteAccount\\\\|signOut\\\\|logout\" /c/Users/Pau/dev/inkbox/apps/web/src --include=*.ts --include=*.tsx)",
-      "Bash(grep -r \"deleteUser\\\\|delete.*User\" /c/Users/Pau/dev/inkbox/apps/api/src --include=*.ts --include=*.tsx)"
+      "Bash(grep -r \"deleteUser\\\\|delete.*User\" /c/Users/Pau/dev/inkbox/apps/api/src --include=*.ts --include=*.tsx)",
+      "Bash(pnpm --filter api prisma migrate dev --name add-collection-icon)",
+      "Bash(npx prisma:*)"
     ]
   }
 }
