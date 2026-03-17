@@ -114,7 +114,8 @@ export function ItemRow({
   const firstCollection = item.collections?.[0];
 
   const isHovered = hoveredId === item.id;
-  const isDimmed = hoveredId !== null && !isHovered;
+  const isActive = isHovered || popoverOpen;
+  const isDimmed = hoveredId !== null && !isHovered && !popoverOpen;
 
   function handleMouseEnter() {
     onHoverChange(item.id);
@@ -133,6 +134,7 @@ export function ItemRow({
   }
 
   function handleMouseLeave() {
+    if (popoverOpen) return;
     onHoverChange(null);
     setCardPos(null);
   }
@@ -145,8 +147,9 @@ export function ItemRow({
       className={[
         'relative flex h-10 items-center gap-3 rounded-lg px-2',
         'transition-all duration-200 ease-out',
+        popoverOpen ? 'z-20' : '',
         isDimmed ? 'opacity-40 scale-y-[0.97]' : 'opacity-100',
-        isHovered ? 'bg-stone-100/70 dark:bg-stone-800/60' : '',
+        isActive ? 'bg-stone-100/70 dark:bg-stone-800/60' : '',
       ].join(' ')}
     >
       {/* Full-row click target — sits behind all interactive children */}
@@ -160,13 +163,13 @@ export function ItemRow({
       <div className={[
           'relative flex h-10 w-full items-center gap-3',
           'transition-transform duration-200 ease-out',
-          isHovered ? 'translate-x-0.5' : '',
+          isActive ? 'translate-x-0.5' : '',
         ].join(' ')}>
         {/* Hover action icons — visible only when this row is hovered */}
         <div
           className={[
             'flex shrink-0 items-center gap-0.5 transition-opacity duration-150',
-            isHovered ? 'opacity-100' : 'opacity-0',
+            isActive ? 'opacity-100' : 'opacity-0',
           ].join(' ')}
         >
           {/* Archive / Unarchive */}
