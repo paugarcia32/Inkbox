@@ -49,7 +49,9 @@
       "Bash(pnpm --filter api prisma migrate dev --name add-collection-icon)",
       "Bash(npx prisma:*)",
       "Bash(find C:UsersPaudevinkbox -name .env* -o -name *.env*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "Bash(npx nx:*)",
+      "Bash(pnpm biome:*)"
     ]
   }
 }
