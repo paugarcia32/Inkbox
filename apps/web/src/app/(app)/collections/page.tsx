@@ -5,9 +5,9 @@ import { IconPicker } from '@/components/icon-picker';
 import { ItemsSection } from '@/components/items-section';
 import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
+import { FolderIcon, PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { Collection } from '@inkbox/types';
 import { COLLECTION_COLORS } from '@inkbox/types';
-import { FolderIcon, PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -166,9 +166,7 @@ function EditCollectionModal({
           <IconPicker value={icon} color={getColorHex(color)} onChange={setIcon} />
         </div>
 
-        {error && (
-          <p className="mt-2 text-xs text-red-500">{error}</p>
-        )}
+        {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
 
         <div className="mt-4 flex justify-end gap-2">
           <button
@@ -299,7 +297,9 @@ export default function CollectionsPage() {
 
         {isError && (
           <div className="flex flex-col items-center gap-2 py-16 text-center">
-            <p className="text-sm text-stone-500 dark:text-stone-400">Failed to load collections.</p>
+            <p className="text-sm text-stone-500 dark:text-stone-400">
+              Failed to load collections.
+            </p>
             <button
               type="button"
               onClick={() => void refetch()}
@@ -330,63 +330,72 @@ export default function CollectionsPage() {
               </button>
             </div>
           ) : (
-          <ul className="space-y-0.5">
-            {(data?.collections ?? []).map((collection) => (
-              <li
-                key={collection.id}
-                className="group relative flex h-10 items-center gap-3 rounded-lg px-2 transition-all duration-200 ease-out hover:bg-stone-100/70 dark:hover:bg-stone-800/60"
-              >
-                {/* Full-row link */}
-                <Link
-                  href={`/collections/${collection.id}`}
-                  className="absolute inset-0 rounded-lg"
-                  aria-label={collection.name}
-                />
+            <ul className="space-y-0.5">
+              {(data?.collections ?? []).map((collection) => (
+                <li
+                  key={collection.id}
+                  className="group relative flex h-10 items-center gap-3 rounded-lg px-2 transition-all duration-200 ease-out hover:bg-stone-100/70 dark:hover:bg-stone-800/60"
+                >
+                  {/* Full-row link */}
+                  <Link
+                    href={`/collections/${collection.id}`}
+                    className="absolute inset-0 rounded-lg"
+                    aria-label={collection.name}
+                  />
 
-                <div className="pointer-events-none relative flex h-10 w-full items-center gap-3 transition-transform duration-200 ease-out group-hover:translate-x-0.5">
-                  {/* Action buttons — left side, shown on hover */}
-                  <div className="pointer-events-auto relative flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                    <button
-                      type="button"
-                      title="Edit collection"
-                      onClick={(e) => { e.preventDefault(); setEditingCollection(collection); }}
-                      className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-200/60 hover:text-stone-600 dark:hover:bg-stone-700/60 dark:hover:text-stone-300"
-                    >
-                      <PencilIcon className="size-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      title="Delete collection"
-                      disabled={deleteEmpty.isPending}
-                      onClick={(e) => { e.preventDefault(); handleDeleteClick(collection); }}
-                      className="rounded p-1 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-30 dark:hover:bg-red-950/40 dark:hover:text-red-400"
-                    >
-                      <TrashIcon className="size-3.5" />
-                    </button>
+                  <div className="pointer-events-none relative flex h-10 w-full items-center gap-3 transition-transform duration-200 ease-out group-hover:translate-x-0.5">
+                    {/* Action buttons — left side, shown on hover */}
+                    <div className="pointer-events-auto relative flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                      <button
+                        type="button"
+                        title="Edit collection"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setEditingCollection(collection);
+                        }}
+                        className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-200/60 hover:text-stone-600 dark:hover:bg-stone-700/60 dark:hover:text-stone-300"
+                      >
+                        <PencilIcon className="size-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        title="Delete collection"
+                        disabled={deleteEmpty.isPending}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleDeleteClick(collection);
+                        }}
+                        className="rounded p-1 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-30 dark:hover:bg-red-950/40 dark:hover:text-red-400"
+                      >
+                        <TrashIcon className="size-3.5" />
+                      </button>
+                    </div>
+
+                    {/* Color dot or icon */}
+                    {(() => {
+                      const IconComp = getCollectionIcon(collection.icon);
+                      const hex = getColorHex(collection.color);
+                      return IconComp ? (
+                        <IconComp className="size-4 shrink-0" style={{ color: hex }} />
+                      ) : (
+                        <span
+                          className="size-2 shrink-0 rounded-full"
+                          style={{ background: hex }}
+                        />
+                      );
+                    })()}
+
+                    <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-800 dark:text-stone-100">
+                      {collection.name}
+                    </span>
+
+                    <span className="shrink-0 text-xs text-stone-400 dark:text-stone-500">
+                      {collection.itemCount}
+                    </span>
                   </div>
-
-                  {/* Color dot or icon */}
-                  {(() => {
-                    const IconComp = getCollectionIcon(collection.icon);
-                    const hex = getColorHex(collection.color);
-                    return IconComp ? (
-                      <IconComp className="size-4 shrink-0" style={{ color: hex }} />
-                    ) : (
-                      <span className="size-2 shrink-0 rounded-full" style={{ background: hex }} />
-                    );
-                  })()}
-
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-800 dark:text-stone-100">
-                    {collection.name}
-                  </span>
-
-                  <span className="shrink-0 text-xs text-stone-400 dark:text-stone-500">
-                    {collection.itemCount}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
+                </li>
+              ))}
+            </ul>
           )}
         </ItemsSection>
       </div>

@@ -4,11 +4,11 @@ import { BottomUrlBar } from '@/components/bottom-url-bar';
 import { FilterBar } from '@/components/filter-bar';
 import type { GroupBy, SortOption, TypeFilter } from '@/components/filter-bar';
 import { ItemDetailPanel } from '@/components/item-detail-panel';
-import { ItemsSection } from '@/components/items-section';
 import { ItemRow } from '@/components/item-row';
+import { ItemsSection } from '@/components/items-section';
 import { trpc } from '@/lib/trpc';
-import type { Item } from '@inkbox/types';
 import { ChevronRightIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
+import type { Item } from '@inkbox/types';
 import { useMemo, useState } from 'react';
 
 type Group = { key: string; label: string; items: Item[] };
@@ -56,7 +56,8 @@ function buildGroups(items: Item[], groupBy: GroupBy): Group[] {
       } else {
         // Appear in every collection the item belongs to
         for (const col of cols) {
-          if (!map.has(col.collectionId)) map.set(col.collectionId, { label: col.collectionName, items: [] });
+          if (!map.has(col.collectionId))
+            map.set(col.collectionId, { label: col.collectionName, items: [] });
           map.get(col.collectionId)!.items.push(item);
         }
       }
@@ -103,8 +104,10 @@ export default function AllPage() {
       result = result.filter((item) => item.type === typeFilter);
     }
     return [...result].sort((a, b) => {
-      if (sort === 'date-desc') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      if (sort === 'date-asc') return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      if (sort === 'date-desc')
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sort === 'date-asc')
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       const ta = (a.title?.trim() || a.url).toLowerCase();
       const tb = (b.title?.trim() || b.url).toLowerCase();
       return sort === 'alpha-asc' ? ta.localeCompare(tb) : tb.localeCompare(ta);
@@ -156,77 +159,77 @@ export default function AllPage() {
             </button>
           </div>
         ) : (
-        <ItemsSection isLoading={isLoading} isFetching={isFetching}>
-          {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <SquaresPlusIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
-              <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
-                Nothing saved yet
-              </p>
-              <p className="mt-1 text-xs text-stone-400 dark:text-stone-600">
-                Paste a link anywhere on this page to save it
-              </p>
-            </div>
-          ) : groups ? (
-            <div className="space-y-1">
-              {groups.map((group) => {
-                const collapsed = collapsedGroups.has(group.key);
-                return (
-                  <div key={group.key}>
-                    <button
-                      type="button"
-                      onClick={() => toggleGroup(group.key)}
-                      className="flex w-full items-center gap-1.5 py-1.5 text-left"
-                    >
-                      <ChevronRightIcon
-                        className={[
-                          'size-3 shrink-0 text-stone-400 transition-transform duration-150',
-                          collapsed ? '' : 'rotate-90',
-                        ].join(' ')}
-                      />
-                      <span className="text-xs font-medium text-stone-500 dark:text-stone-400">
-                        {group.label}
-                      </span>
-                      <div className="mx-2 h-px flex-1 bg-stone-200 dark:bg-stone-700" />
-                      <span className="text-xs tabular-nums text-stone-400 dark:text-stone-500">
-                        {group.items.length}
-                      </span>
-                    </button>
-                    {!collapsed && (
-                      <ul className="space-y-0.5">
-                        {group.items.map((item) => (
-                          <ItemRow
-                            key={item.id}
-                            item={item}
-                            showCollection={groupBy !== 'collection'}
-                            showArchivedBadge={showArchived}
-                            onOpen={setSelectedItem}
-                            hoveredId={hoveredId}
-                            onHoverChange={setHoveredId}
-                          />
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <ul className="space-y-0.5">
-              {items.map((item) => (
-                <ItemRow
-                  key={item.id}
-                  item={item}
-                  showCollection={true}
-                  showArchivedBadge={showArchived}
-                  onOpen={setSelectedItem}
-                  hoveredId={hoveredId}
-                  onHoverChange={setHoveredId}
-                />
-              ))}
-            </ul>
-          )}
-        </ItemsSection>
+          <ItemsSection isLoading={isLoading} isFetching={isFetching}>
+            {items.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <SquaresPlusIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
+                <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
+                  Nothing saved yet
+                </p>
+                <p className="mt-1 text-xs text-stone-400 dark:text-stone-600">
+                  Paste a link anywhere on this page to save it
+                </p>
+              </div>
+            ) : groups ? (
+              <div className="space-y-1">
+                {groups.map((group) => {
+                  const collapsed = collapsedGroups.has(group.key);
+                  return (
+                    <div key={group.key}>
+                      <button
+                        type="button"
+                        onClick={() => toggleGroup(group.key)}
+                        className="flex w-full items-center gap-1.5 py-1.5 text-left"
+                      >
+                        <ChevronRightIcon
+                          className={[
+                            'size-3 shrink-0 text-stone-400 transition-transform duration-150',
+                            collapsed ? '' : 'rotate-90',
+                          ].join(' ')}
+                        />
+                        <span className="text-xs font-medium text-stone-500 dark:text-stone-400">
+                          {group.label}
+                        </span>
+                        <div className="mx-2 h-px flex-1 bg-stone-200 dark:bg-stone-700" />
+                        <span className="text-xs tabular-nums text-stone-400 dark:text-stone-500">
+                          {group.items.length}
+                        </span>
+                      </button>
+                      {!collapsed && (
+                        <ul className="space-y-0.5">
+                          {group.items.map((item) => (
+                            <ItemRow
+                              key={item.id}
+                              item={item}
+                              showCollection={groupBy !== 'collection'}
+                              showArchivedBadge={showArchived}
+                              onOpen={setSelectedItem}
+                              hoveredId={hoveredId}
+                              onHoverChange={setHoveredId}
+                            />
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <ul className="space-y-0.5">
+                {items.map((item) => (
+                  <ItemRow
+                    key={item.id}
+                    item={item}
+                    showCollection={true}
+                    showArchivedBadge={showArchived}
+                    onOpen={setSelectedItem}
+                    hoveredId={hoveredId}
+                    onHoverChange={setHoveredId}
+                  />
+                ))}
+              </ul>
+            )}
+          </ItemsSection>
         )}
       </div>
 

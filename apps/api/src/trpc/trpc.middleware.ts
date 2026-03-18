@@ -6,7 +6,12 @@ import { ItemsRouter } from '../modules/items/items.router';
 import { UsersRouter } from '../modules/users/users.router';
 import { TrpcService } from './trpc.service';
 
-function createAppRouter(trpc: TrpcService, items: ItemsRouter, collections: CollectionsRouter, users: UsersRouter) {
+function createAppRouter(
+  trpc: TrpcService,
+  items: ItemsRouter,
+  collections: CollectionsRouter,
+  users: UsersRouter,
+) {
   return trpc.mergeRouters(
     trpc.router({ items: items.router }),
     trpc.router({ collections: collections.router }),

@@ -63,7 +63,10 @@ export class ItemsService {
     }
   }
 
-  async findAll(userId: string, { limit, cursor, inboxOnly, archivedOnly, includeArchived, collectionId }: FindAllOptions) {
+  async findAll(
+    userId: string,
+    { limit, cursor, inboxOnly, archivedOnly, includeArchived, collectionId }: FindAllOptions,
+  ) {
     const where = {
       userId,
       // Collection detail page: filter by specific collection

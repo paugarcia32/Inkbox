@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "@inkbox/config/nestjs",
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "Node",

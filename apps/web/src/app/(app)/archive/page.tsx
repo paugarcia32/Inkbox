@@ -4,11 +4,11 @@ import { BottomUrlBar } from '@/components/bottom-url-bar';
 import { FilterBar } from '@/components/filter-bar';
 import type { SortOption, TypeFilter } from '@/components/filter-bar';
 import { ItemDetailPanel } from '@/components/item-detail-panel';
-import { ItemsSection } from '@/components/items-section';
 import { ItemRow } from '@/components/item-row';
+import { ItemsSection } from '@/components/items-section';
 import { trpc } from '@/lib/trpc';
-import type { Item } from '@inkbox/types';
 import { ArchiveBoxIcon } from '@heroicons/react/24/outline';
+import type { Item } from '@inkbox/types';
 import { useMemo, useState } from 'react';
 
 export default function ArchivePage() {
@@ -27,8 +27,10 @@ export default function ArchivePage() {
       result = result.filter((item) => item.type === typeFilter);
     }
     return [...result].sort((a, b) => {
-      if (sort === 'date-desc') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      if (sort === 'date-asc') return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      if (sort === 'date-desc')
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sort === 'date-asc')
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       const ta = (a.title?.trim() || a.url).toLowerCase();
       const tb = (b.title?.trim() || b.url).toLowerCase();
       return sort === 'alpha-asc' ? ta.localeCompare(tb) : tb.localeCompare(ta);
@@ -57,32 +59,32 @@ export default function ArchivePage() {
             </button>
           </div>
         ) : (
-        <ItemsSection isLoading={isLoading}>
-          {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <ArchiveBoxIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
-              <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
-                Archive is empty
-              </p>
-              <p className="mt-1 text-xs text-stone-400 dark:text-stone-600">
-                Archived items will appear here
-              </p>
-            </div>
-          ) : (
-            <ul className="space-y-0.5">
-              {items.map((item) => (
-                <ItemRow
-                  key={item.id}
-                  item={item}
-                  showCollection={true}
-                  onOpen={setSelectedItem}
-                  hoveredId={hoveredId}
-                  onHoverChange={setHoveredId}
-                />
-              ))}
-            </ul>
-          )}
-        </ItemsSection>
+          <ItemsSection isLoading={isLoading}>
+            {items.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <ArchiveBoxIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
+                <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
+                  Archive is empty
+                </p>
+                <p className="mt-1 text-xs text-stone-400 dark:text-stone-600">
+                  Archived items will appear here
+                </p>
+              </div>
+            ) : (
+              <ul className="space-y-0.5">
+                {items.map((item) => (
+                  <ItemRow
+                    key={item.id}
+                    item={item}
+                    showCollection={true}
+                    onOpen={setSelectedItem}
+                    hoveredId={hoveredId}
+                    onHoverChange={setHoveredId}
+                  />
+                ))}
+              </ul>
+            )}
+          </ItemsSection>
         )}
       </div>
 

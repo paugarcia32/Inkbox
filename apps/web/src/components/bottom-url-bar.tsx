@@ -1,7 +1,7 @@
 'use client';
 
-import { usePasteHandler } from '@/lib/use-paste-handler';
 import { trpc } from '@/lib/trpc';
+import { usePasteHandler } from '@/lib/use-paste-handler';
 import { useEffect, useRef, useState } from 'react';
 
 interface BottomUrlBarProps {
@@ -13,7 +13,11 @@ interface BottomUrlBarProps {
   inboxOnlyMessage?: boolean;
 }
 
-export function BottomUrlBar({ collectionId, collectionName, inboxOnlyMessage }: BottomUrlBarProps) {
+export function BottomUrlBar({
+  collectionId,
+  collectionName,
+  inboxOnlyMessage,
+}: BottomUrlBarProps) {
   const [url, setUrl] = useState('');
   const [toast, setToast] = useState<'saved' | 'error' | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);

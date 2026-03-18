@@ -2,9 +2,9 @@
 
 import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
+import { CheckIcon } from '@heroicons/react/24/outline';
 import type { Item } from '@inkbox/types';
 import { COLLECTION_COLORS } from '@inkbox/types';
-import { CheckIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useEffect, useRef } from 'react';
 
 interface AddToCollectionPopoverProps {
@@ -51,9 +51,7 @@ export function AddToCollectionPopover({ item, onClose }: AddToCollectionPopover
       className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-lg border border-stone-200 bg-white py-1 shadow-lg dark:border-stone-700 dark:bg-stone-900"
       onClick={(e) => e.stopPropagation()}
     >
-      {isLoading && (
-        <p className="px-3 py-2 text-xs text-stone-400">Loading…</p>
-      )}
+      {isLoading && <p className="px-3 py-2 text-xs text-stone-400">Loading…</p>}
 
       {data?.collections.length === 0 && (
         <p className="px-3 py-2 text-xs text-stone-400">No collections yet</p>
@@ -78,15 +76,17 @@ export function AddToCollectionPopover({ item, onClose }: AddToCollectionPopover
           >
             <span className="flex size-4 shrink-0 items-center justify-center">
               {isIn && <CheckIcon className="size-3.5 text-accent-500" />}
-              {!isIn && (() => {
-                const hex = COLLECTION_COLORS.find((c) => c.id === collection.color)?.hex ?? '#78716c';
-                const IconComp = getCollectionIcon(collection.icon);
-                return IconComp ? (
-                  <IconComp className="size-3.5" style={{ color: hex }} />
-                ) : (
-                  <span className="size-2 rounded-full" style={{ background: hex }} />
-                );
-              })()}
+              {!isIn &&
+                (() => {
+                  const hex =
+                    COLLECTION_COLORS.find((c) => c.id === collection.color)?.hex ?? '#78716c';
+                  const IconComp = getCollectionIcon(collection.icon);
+                  return IconComp ? (
+                    <IconComp className="size-3.5" style={{ color: hex }} />
+                  ) : (
+                    <span className="size-2 rounded-full" style={{ background: hex }} />
+                  );
+                })()}
             </span>
             <span className="truncate">{collection.name}</span>
           </button>

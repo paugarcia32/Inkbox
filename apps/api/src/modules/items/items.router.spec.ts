@@ -183,7 +183,10 @@ describe('items tRPC router', () => {
       const col1 = await createTestCollection(user.id);
       const col2 = await createTestCollection(user.id);
       const caller = await getCaller(user.id);
-      const item1 = await caller.items.create({ url: 'https://example.com/1', collectionId: col1.id });
+      const item1 = await caller.items.create({
+        url: 'https://example.com/1',
+        collectionId: col1.id,
+      });
       await caller.items.create({ url: 'https://example.com/2', collectionId: col2.id });
 
       const result = await caller.items.list({ collectionId: col1.id });

@@ -1,11 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { closeTestModule, getTestModule } from '../../test/helpers/create-test-module';
 import { truncateAll } from '../../test/helpers/db';
-import {
-  createTestCollection,
-  createTestItem,
-  createTestUser,
-} from '../../test/helpers/factories';
+import { createTestCollection, createTestItem, createTestUser } from '../../test/helpers/factories';
 import { prisma } from '../../test/helpers/prisma';
 import { CollectionsService } from './collections.service';
 
@@ -134,9 +130,7 @@ describe('CollectionsService', () => {
       const user = await createTestUser();
       const col = await createTestCollection(user.id);
 
-      await expect(
-        service.addItem(user.id, col.id, 'non-existent-item-id'),
-      ).rejects.toThrow();
+      await expect(service.addItem(user.id, col.id, 'non-existent-item-id')).rejects.toThrow();
     });
   });
 

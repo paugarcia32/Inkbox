@@ -16,8 +16,9 @@ export class UsersRouter {
         .input(z.object({ name: z.string().min(1).max(100) }))
         .mutation(({ ctx, input }) => this.users.updateProfile(ctx.userId, input.name)),
 
-      deleteAccount: this.trpc.protectedProcedure
-        .mutation(({ ctx }) => this.users.deleteAccount(ctx.userId)),
+      deleteAccount: this.trpc.protectedProcedure.mutation(({ ctx }) =>
+        this.users.deleteAccount(ctx.userId),
+      ),
     });
   }
 }

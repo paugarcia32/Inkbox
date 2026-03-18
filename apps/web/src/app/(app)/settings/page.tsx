@@ -162,8 +162,8 @@ export default function SettingsPage() {
                   Are you sure you want to delete your account?
                 </p>
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                  This will permanently delete all your items, collections, and account data.
-                  This action cannot be undone.
+                  This will permanently delete all your items, collections, and account data. This
+                  action cannot be undone.
                 </p>
                 <div className="mt-4 flex gap-3">
                   <button

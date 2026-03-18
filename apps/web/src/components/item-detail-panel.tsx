@@ -1,7 +1,7 @@
 'use client';
 
-import type { Item } from '@inkbox/types';
 import { ArrowTopRightOnSquareIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import type { Item } from '@inkbox/types';
 import Image from 'next/image';
 
 interface ItemDetailPanelProps {
@@ -15,12 +15,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps) {
   return (
     <>
       {/* Backdrop */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-30"
-          onClick={onClose}
-        />
-      )}
+      {isOpen && <div className="fixed inset-0 z-30" onClick={onClose} />}
 
       {/* Panel */}
       <div
@@ -45,13 +40,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps) {
             {/* Image preview */}
             {item.imageUrl && (
               <div className="relative mx-4 mt-2 aspect-video overflow-hidden rounded-lg bg-stone-100 dark:bg-stone-800">
-                <Image
-                  src={item.imageUrl}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
+                <Image src={item.imageUrl} alt="" fill className="object-cover" unoptimized />
               </div>
             )}
 

@@ -1,11 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { closeTestModule } from '../../test/helpers/create-test-module';
 import { truncateAll } from '../../test/helpers/db';
-import {
-  createTestCollection,
-  createTestItem,
-  createTestUser,
-} from '../../test/helpers/factories';
+import { createTestCollection, createTestItem, createTestUser } from '../../test/helpers/factories';
 import { prisma } from '../../test/helpers/prisma';
 import { getCaller } from '../../test/helpers/trpc-caller';
 
@@ -60,7 +56,7 @@ describe('collections tRPC router', () => {
       expect(result.nextCursor).toBeNull();
     });
 
-    it('returns only the authenticated user\'s collections', async () => {
+    it("returns only the authenticated user's collections", async () => {
       const user1 = await createTestUser();
       const user2 = await createTestUser();
       await createTestCollection(user2.id);

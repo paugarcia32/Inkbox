@@ -5,13 +5,13 @@ import { BottomUrlBar } from '@/components/bottom-url-bar';
 import { FilterBar } from '@/components/filter-bar';
 import type { SortOption, TypeFilter } from '@/components/filter-bar';
 import { ItemDetailPanel } from '@/components/item-detail-panel';
-import { ItemsSection } from '@/components/items-section';
 import { ItemRow } from '@/components/item-row';
+import { ItemsSection } from '@/components/items-section';
 import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
+import { ArrowLeftIcon, InboxIcon, PlusIcon } from '@heroicons/react/24/outline';
 import type { Item } from '@inkbox/types';
 import { COLLECTION_COLORS } from '@inkbox/types';
-import { ArrowLeftIcon, InboxIcon, PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { use, useMemo, useRef, useState } from 'react';
 
@@ -47,10 +47,7 @@ export default function CollectionDetailPage({
     ? (COLLECTION_COLORS.find((c) => c.id === collection.color)?.hex ?? '#78716c')
     : '#78716c';
 
-  const existingItemIds = useMemo(
-    () => new Set(data?.items.map((i) => i.id) ?? []),
-    [data?.items],
-  );
+  const existingItemIds = useMemo(() => new Set(data?.items.map((i) => i.id) ?? []), [data?.items]);
 
   const items = useMemo(() => {
     let result = data?.items ?? [];
@@ -58,8 +55,10 @@ export default function CollectionDetailPage({
       result = result.filter((item) => item.type === typeFilter);
     }
     return [...result].sort((a, b) => {
-      if (sort === 'date-desc') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      if (sort === 'date-asc') return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      if (sort === 'date-desc')
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sort === 'date-asc')
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       const ta = (a.title?.trim() || a.url).toLowerCase();
       const tb = (b.title?.trim() || b.url).toLowerCase();
       return sort === 'alpha-asc' ? ta.localeCompare(tb) : tb.localeCompare(ta);
@@ -78,24 +77,28 @@ export default function CollectionDetailPage({
             <ArrowLeftIcon className="size-4" />
           </Link>
 
-          {collection && (() => {
-            const IconComp = getCollectionIcon(collection.icon);
-            return (
-              <>
-                {IconComp ? (
-                  <IconComp className="size-4 shrink-0" style={{ color: colorHex }} />
-                ) : (
-                  <span className="size-2.5 shrink-0 rounded-full" style={{ background: colorHex }} />
-                )}
-                <h1 className="text-sm font-semibold text-stone-800 dark:text-stone-100">
-                  {collection.name}
-                </h1>
-                <span className="text-xs text-stone-400 dark:text-stone-500">
-                  {collection.itemCount}
-                </span>
-              </>
-            );
-          })()}
+          {collection &&
+            (() => {
+              const IconComp = getCollectionIcon(collection.icon);
+              return (
+                <>
+                  {IconComp ? (
+                    <IconComp className="size-4 shrink-0" style={{ color: colorHex }} />
+                  ) : (
+                    <span
+                      className="size-2.5 shrink-0 rounded-full"
+                      style={{ background: colorHex }}
+                    />
+                  )}
+                  <h1 className="text-sm font-semibold text-stone-800 dark:text-stone-100">
+                    {collection.name}
+                  </h1>
+                  <span className="text-xs text-stone-400 dark:text-stone-500">
+                    {collection.itemCount}
+                  </span>
+                </>
+              );
+            })()}
 
           {/* Add items button */}
           <div ref={addBtnRef} className="relative ml-auto">
@@ -139,33 +142,33 @@ export default function CollectionDetailPage({
             </button>
           </div>
         ) : (
-        <ItemsSection isLoading={isLoading} isFetching={isFetching}>
-          {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <InboxIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
-              <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
-                No items in this collection
-              </p>
-              <p className="mt-1 text-xs text-stone-400 dark:text-stone-600">
-                Use the "Add items" button above or the folder icon on any saved link
-              </p>
-            </div>
-          ) : (
-            <ul className="space-y-0.5">
-              {items.map((item) => (
-                <ItemRow
-                  key={item.id}
-                  item={item}
-                  showCollection={false}
-                  showArchivedBadge={showArchived}
-                  onOpen={setSelectedItem}
-                  hoveredId={hoveredId}
-                  onHoverChange={setHoveredId}
-                />
-              ))}
-            </ul>
-          )}
-        </ItemsSection>
+          <ItemsSection isLoading={isLoading} isFetching={isFetching}>
+            {items.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <InboxIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
+                <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
+                  No items in this collection
+                </p>
+                <p className="mt-1 text-xs text-stone-400 dark:text-stone-600">
+                  Use the "Add items" button above or the folder icon on any saved link
+                </p>
+              </div>
+            ) : (
+              <ul className="space-y-0.5">
+                {items.map((item) => (
+                  <ItemRow
+                    key={item.id}
+                    item={item}
+                    showCollection={false}
+                    showArchivedBadge={showArchived}
+                    onOpen={setSelectedItem}
+                    hoveredId={hoveredId}
+                    onHoverChange={setHoveredId}
+                  />
+                ))}
+              </ul>
+            )}
+          </ItemsSection>
         )}
       </div>
 

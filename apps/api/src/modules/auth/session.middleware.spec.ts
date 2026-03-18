@@ -13,10 +13,7 @@ describe('SessionMiddleware', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     const module = await Test.createTestingModule({
-      providers: [
-        SessionMiddleware,
-        { provide: AuthService, useValue: mockAuthService },
-      ],
+      providers: [SessionMiddleware, { provide: AuthService, useValue: mockAuthService }],
     }).compile();
     middleware = module.get(SessionMiddleware);
   });

@@ -9,7 +9,7 @@ export async function getTestModule(): Promise<TestingModule> {
   cached = await Test.createTestingModule({
     imports: [
       PrismaModule, // @Global — provides PrismaService
-      TrpcModule,   // @Global — imports ItemsModule + CollectionsModule
+      TrpcModule, // @Global — imports ItemsModule + CollectionsModule
     ],
   }).compile();
   await cached.init();

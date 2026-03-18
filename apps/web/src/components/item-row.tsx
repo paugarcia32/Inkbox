@@ -3,9 +3,15 @@
 import { AddToCollectionPopover } from '@/components/add-to-collection-popover';
 import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
+import {
+  ArchiveBoxArrowDownIcon,
+  ArchiveBoxIcon,
+  FolderPlusIcon,
+  GlobeAltIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 import type { Item } from '@inkbox/types';
 import { COLLECTION_COLORS } from '@inkbox/types';
-import { ArchiveBoxArrowDownIcon, ArchiveBoxIcon, FolderPlusIcon, GlobeAltIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -126,7 +132,7 @@ export function ItemRow({
     onHoverChange(item.id);
     if (rowRef.current) {
       const rect = rowRef.current.getBoundingClientRect();
-      const cardWidth = 224;  // w-56
+      const cardWidth = 224; // w-56
       const cardHeight = 300; // safe max estimate
       const rawTop = rect.top + rect.height / 2;
       const top = Math.max(
@@ -165,11 +171,13 @@ export function ItemRow({
         className="absolute inset-0 cursor-pointer rounded-lg"
       />
 
-      <div className={[
+      <div
+        className={[
           'relative flex h-10 w-full items-center gap-3',
           'transition-transform duration-200 ease-out',
           isActive ? 'translate-x-0.5' : '',
-        ].join(' ')}>
+        ].join(' ')}
+      >
         {/* Hover action icons — visible only when this row is hovered */}
         <div
           className={[
@@ -281,78 +289,99 @@ export function ItemRow({
         )}
 
         {/* Collection badge(s) — All page only */}
-        {showCollection && firstCollection && (() => {
-          const cols = item.collections ?? [firstCollection];
-          const isMulti = cols.length > 1;
+        {showCollection &&
+          firstCollection &&
+          (() => {
+            const cols = item.collections ?? [firstCollection];
+            const isMulti = cols.length > 1;
 
-          if (isMulti) {
-            // Multiple collections: show only colored dots/icons for all of them.
-            // Count speaks for itself; names appear in the tooltip on hover.
-            return (
-              <span className="group/badge relative ml-2 flex shrink-0 cursor-default items-center gap-1">
-                {cols.slice(0, 5).map((c) => {
-                  const hex = COLLECTION_COLORS.find((col) => col.id === c.collectionColor)?.hex ?? '#78716c';
-                  const ColIcon = getCollectionIcon(c.collectionIcon);
-                  return ColIcon ? (
-                    <ColIcon key={c.collectionId} className="size-3 shrink-0" style={{ color: hex }} />
-                  ) : (
-                    <span key={c.collectionId} className="block size-1.5 shrink-0 rounded-full" style={{ background: hex }} />
-                  );
-                })}
-                {cols.length > 5 && (
-                  <span className="text-[10px] text-stone-300 dark:text-stone-600">+{cols.length - 5}</span>
-                )}
-                {/* Tooltip: full list of collection names */}
-                <span className="pointer-events-none absolute bottom-full right-0 z-50 mb-1.5 hidden min-w-max flex-col gap-0.5 rounded-lg border border-stone-200 bg-white px-2.5 py-2 shadow-md group-hover/badge:flex dark:border-stone-700 dark:bg-stone-900">
-                  {cols.map((c) => {
-                    const hex = COLLECTION_COLORS.find((col) => col.id === c.collectionColor)?.hex ?? '#78716c';
+            if (isMulti) {
+              // Multiple collections: show only colored dots/icons for all of them.
+              // Count speaks for itself; names appear in the tooltip on hover.
+              return (
+                <span className="group/badge relative ml-2 flex shrink-0 cursor-default items-center gap-1">
+                  {cols.slice(0, 5).map((c) => {
+                    const hex =
+                      COLLECTION_COLORS.find((col) => col.id === c.collectionColor)?.hex ??
+                      '#78716c';
                     const ColIcon = getCollectionIcon(c.collectionIcon);
-                    return (
-                      <span key={c.collectionId} className="flex items-center gap-1.5">
-                        {ColIcon ? (
-                          <ColIcon className="size-3 shrink-0" style={{ color: hex }} />
-                        ) : (
-                          <span className="size-1.5 shrink-0 rounded-full" style={{ background: hex }} />
-                        )}
-                        <span className="text-xs text-stone-600 dark:text-stone-300">{c.collectionName}</span>
-                      </span>
+                    return ColIcon ? (
+                      <ColIcon
+                        key={c.collectionId}
+                        className="size-3 shrink-0"
+                        style={{ color: hex }}
+                      />
+                    ) : (
+                      <span
+                        key={c.collectionId}
+                        className="block size-1.5 shrink-0 rounded-full"
+                        style={{ background: hex }}
+                      />
                     );
                   })}
+                  {cols.length > 5 && (
+                    <span className="text-[10px] text-stone-300 dark:text-stone-600">
+                      +{cols.length - 5}
+                    </span>
+                  )}
+                  {/* Tooltip: full list of collection names */}
+                  <span className="pointer-events-none absolute bottom-full right-0 z-50 mb-1.5 hidden min-w-max flex-col gap-0.5 rounded-lg border border-stone-200 bg-white px-2.5 py-2 shadow-md group-hover/badge:flex dark:border-stone-700 dark:bg-stone-900">
+                    {cols.map((c) => {
+                      const hex =
+                        COLLECTION_COLORS.find((col) => col.id === c.collectionColor)?.hex ??
+                        '#78716c';
+                      const ColIcon = getCollectionIcon(c.collectionIcon);
+                      return (
+                        <span key={c.collectionId} className="flex items-center gap-1.5">
+                          {ColIcon ? (
+                            <ColIcon className="size-3 shrink-0" style={{ color: hex }} />
+                          ) : (
+                            <span
+                              className="size-1.5 shrink-0 rounded-full"
+                              style={{ background: hex }}
+                            />
+                          )}
+                          <span className="text-xs text-stone-600 dark:text-stone-300">
+                            {c.collectionName}
+                          </span>
+                        </span>
+                      );
+                    })}
+                  </span>
                 </span>
+              );
+            }
+
+            // Single collection: dot/icon + name
+            const hex =
+              COLLECTION_COLORS.find((c) => c.id === firstCollection.collectionColor)?.hex ??
+              '#78716c';
+            const FirstIcon = getCollectionIcon(firstCollection.collectionIcon);
+            return (
+              <span className="ml-2 flex shrink-0 items-center gap-1 text-xs text-stone-400 dark:text-stone-500">
+                {FirstIcon ? (
+                  <FirstIcon className="size-3 shrink-0" style={{ color: hex }} />
+                ) : (
+                  <span className="size-1.5 shrink-0 rounded-full" style={{ background: hex }} />
+                )}
+                {firstCollection.collectionName}
               </span>
             );
-          }
-
-          // Single collection: dot/icon + name
-          const hex = COLLECTION_COLORS.find((c) => c.id === firstCollection.collectionColor)?.hex ?? '#78716c';
-          const FirstIcon = getCollectionIcon(firstCollection.collectionIcon);
-          return (
-            <span className="ml-2 flex shrink-0 items-center gap-1 text-xs text-stone-400 dark:text-stone-500">
-              {FirstIcon ? (
-                <FirstIcon className="size-3 shrink-0" style={{ color: hex }} />
-              ) : (
-                <span className="size-1.5 shrink-0 rounded-full" style={{ background: hex }} />
-              )}
-              {firstCollection.collectionName}
-            </span>
-          );
-        })()}
+          })()}
 
         {/* Domain */}
-        <span className="ml-3 shrink-0 text-xs text-stone-400 dark:text-stone-500">
-          {hostname}
-        </span>
+        <span className="ml-3 shrink-0 text-xs text-stone-400 dark:text-stone-500">{hostname}</span>
       </div>
 
       {/* Hover card — portalled into body so CSS transforms on ancestors
           don't break the fixed positioning (any transform creates a new
           containing block for position:fixed, including translateY(0)). */}
-      {isHovered && cardPos &&
+      {isHovered &&
+        cardPos &&
         createPortal(
           <ItemHoverCard item={item} top={cardPos.top} left={cardPos.left} />,
           document.body,
-        )
-      }
+        )}
     </li>
   );
 }

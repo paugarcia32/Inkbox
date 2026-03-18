@@ -139,12 +139,7 @@ export function FilterBar({
 }: FilterBarProps) {
   return (
     <div className="mb-3 flex h-9 items-center gap-1">
-      <Dropdown
-        value={sort}
-        onChange={onSortChange}
-        options={SORT_OPTIONS}
-        label="Sort"
-      />
+      <Dropdown value={sort} onChange={onSortChange} options={SORT_OPTIONS} label="Sort" />
       <Dropdown
         value={typeFilter}
         onChange={onTypeFilterChange}

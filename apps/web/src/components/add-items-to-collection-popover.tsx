@@ -54,9 +54,7 @@ export function AddItemsToCollectionPopover({ collectionId, existingItemIds, onC
     if (!query.trim()) return available;
     const q = query.toLowerCase();
     return available.filter(
-      (item) =>
-        item.title?.toLowerCase().includes(q) ||
-        item.url.toLowerCase().includes(q),
+      (item) => item.title?.toLowerCase().includes(q) || item.url.toLowerCase().includes(q),
     );
   }, [data?.items, existingItemIds, query]);
 
@@ -81,9 +79,7 @@ export function AddItemsToCollectionPopover({ collectionId, existingItemIds, onC
 
       {/* List */}
       <div className="max-h-64 overflow-y-auto py-1">
-        {isLoading && (
-          <p className="px-3 py-2 text-xs text-stone-400">Loading…</p>
-        )}
+        {isLoading && <p className="px-3 py-2 text-xs text-stone-400">Loading…</p>}
 
         {!isLoading && filtered.length === 0 && (
           <p className="px-3 py-3 text-center text-xs text-stone-400">

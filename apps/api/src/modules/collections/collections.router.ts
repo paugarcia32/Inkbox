@@ -46,7 +46,11 @@ export class CollectionsRouter {
           }),
         )
         .mutation(({ ctx, input }) =>
-          this.collections.update(ctx.userId, input.id, { name: input.name, color: input.color, icon: input.icon }),
+          this.collections.update(ctx.userId, input.id, {
+            name: input.name,
+            color: input.color,
+            icon: input.icon,
+          }),
         ),
 
       delete: this.trpc.protectedProcedure

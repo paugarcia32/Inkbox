@@ -54,9 +54,7 @@ export function ItemsSection({ isLoading, isFetching, children, skeleton }: Item
         <div
           className={[
             'transition-opacity duration-150',
-            skeletonExiting
-              ? 'pointer-events-none opacity-0 absolute inset-x-0 top-0'
-              : '',
+            skeletonExiting ? 'pointer-events-none opacity-0 absolute inset-x-0 top-0' : '',
           ].join(' ')}
         >
           {skeleton ?? <ItemListSkeleton />}
