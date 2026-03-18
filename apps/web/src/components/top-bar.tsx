@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { Logo } from './logo';
 import { UserMenu } from './user-menu';
 
 const NAV_ITEMS = [
@@ -36,7 +37,8 @@ export function TopBar() {
     <header className="sticky top-0 z-50 bg-stone-50 dark:bg-stone-900">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
         {/* Logo */}
-        <div className="size-7 shrink-0 rounded-full bg-accent-500" />
+        {/*<div className="size-7 shrink-0 rounded-full bg-accent-500" />*/}
+        <Logo size={32} />
 
         {/* Pill nav */}
         <div

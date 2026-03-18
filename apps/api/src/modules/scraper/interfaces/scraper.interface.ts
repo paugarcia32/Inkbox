@@ -1,4 +1,4 @@
-import type { ContentType } from '@inkbox/types';
+import type { ContentType } from '@hako/types';
 
 export type ScrapeResult = {
   title: string | null;

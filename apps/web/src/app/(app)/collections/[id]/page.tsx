@@ -10,8 +10,8 @@ import { ItemsSection } from '@/components/items-section';
 import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
 import { ArrowLeftIcon, InboxIcon, PlusIcon } from '@heroicons/react/24/outline';
-import type { Item } from '@inkbox/types';
-import { COLLECTION_COLORS } from '@inkbox/types';
+import type { Item } from '@hako/types';
+import { COLLECTION_COLORS } from '@hako/types';
 import Link from 'next/link';
 import { use, useMemo, useRef, useState } from 'react';
 

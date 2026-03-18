@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowTopRightOnSquareIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import type { Item } from '@inkbox/types';
+import type { Item } from '@hako/types';
 import Image from 'next/image';
 
 interface ItemDetailPanelProps {

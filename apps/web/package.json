@@ -1,5 +1,5 @@
 {
-  "name": "@inkbox/web",
+  "name": "@hako/web",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
-    "@inkbox/types": "workspace:*",
-    "@inkbox/ui": "workspace:*",
+    "@hako/types": "workspace:*",
+    "@hako/ui": "workspace:*",
     "@tailwindcss/postcss": "^4.2.1",
     "@tanstack/react-query": "^5.0.0",
     "@trpc/client": "^11.0.0",
@@ -25,7 +25,7 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
-    "@inkbox/config": "workspace:*",
+    "@hako/config": "workspace:*",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

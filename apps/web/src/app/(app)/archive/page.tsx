@@ -8,7 +8,7 @@ import { ItemRow } from '@/components/item-row';
 import { ItemsSection } from '@/components/items-section';
 import { trpc } from '@/lib/trpc';
 import { ArchiveBoxIcon } from '@heroicons/react/24/outline';
-import type { Item } from '@inkbox/types';
+import type { Item } from '@hako/types';
 import { useMemo, useState } from 'react';
 
 export default function ArchivePage() {

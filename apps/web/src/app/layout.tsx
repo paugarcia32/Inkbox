@@ -8,8 +8,14 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Inkbox',
-  description: 'Your personal reading inbox',
+  title: 'hako',
+  description: 'Your box. Your internet.',
+  icons: {
+    icon: [
+      { url: '/logo-light.png', media: '(prefers-color-scheme: light)' },
+      { url: '/logo-dark.png', media: '(prefers-color-scheme: dark)' },
+    ],
+  },
 };
 
 // Blocking inline script — must run before first paint to avoid theme flash.

@@ -1,4 +1,4 @@
-import type { CreateItemInput } from '@inkbox/types';
+import type { CreateItemInput } from '@hako/types';
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ScraperService } from '../scraper/scraper.service';

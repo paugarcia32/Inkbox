@@ -1,5 +1,5 @@
 {
-  "extends": "@inkbox/config/nextjs",
+  "extends": "@hako/config/nextjs",
   "compilerOptions": {
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",

@@ -1,5 +1,5 @@
 {
-  "extends": "@inkbox/config/nextjs",
+  "extends": "@hako/config/nextjs",
   "compilerOptions": {
     "jsx": "react-jsx"
   },

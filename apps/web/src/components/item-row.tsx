@@ -10,8 +10,8 @@ import {
   GlobeAltIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import type { Item } from '@inkbox/types';
-import { COLLECTION_COLORS } from '@inkbox/types';
+import type { Item } from '@hako/types';
+import { COLLECTION_COLORS } from '@hako/types';
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 

@@ -1,4 +1,4 @@
-import type { Collection } from '@inkbox/types';
+import type { Collection } from '@hako/types';
 
 type CollectionCardProps = {
   collection: Collection;

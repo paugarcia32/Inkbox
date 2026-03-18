@@ -1,4 +1,4 @@
-import type { ContentType } from '@inkbox/types';
+import type { ContentType } from '@hako/types';
 import { Injectable, Logger } from '@nestjs/common';
 import type { IScraper, ScrapeResult } from '../interfaces/scraper.interface';
 import { emptyResult } from '../interfaces/scraper.interface';

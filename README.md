@@ -1,4 +1,4 @@
-# Inkbox
+# hako
 
 Personal reading inbox. Save URLs, read later, organize in collections.
 
@@ -18,14 +18,14 @@ Personal reading inbox. Save URLs, read later, organize in collections.
 ## Structure
 
 ```
-inkbox/
+hako/
 ├── apps/
 │   ├── web/          # Next.js — http://localhost:3000
 │   └── api/          # NestJS — http://localhost:3001
 ├── packages/
-│   ├── types/        # @inkbox/types — shared TypeScript types
-│   ├── ui/           # @inkbox/ui    — shared React components
-│   └── config/       # @inkbox/config — base tsconfig/biome
+│   ├── types/        # @hako/types — shared TypeScript types
+│   ├── ui/           # @hako/ui    — shared React components
+│   └── config/       # @hako/config — base tsconfig/biome
 ├── biome.json
 ├── turbo.json
 └── docker-compose.yml
@@ -101,13 +101,13 @@ pnpm build        # Compile to dist/
 pnpm start        # Run compiled dist/main.js
 pnpm typecheck    # Type check without emitting
 
-pnpm test           # Run tests (requires inkbox_test DB)
+pnpm test           # Run tests (requires hako_test DB)
 pnpm test:watch     # Watch mode
 pnpm test:coverage  # With coverage report
 
 pnpm db:push           # Push schema to DB (dev, no migration files)
 pnpm db:migrate        # Create and apply a migration
-pnpm db:migrate:test   # Push schema to test DB (inkbox_test)
+pnpm db:migrate:test   # Push schema to test DB (hako_test)
 pnpm db:studio         # Open Prisma Studio at http://localhost:5555
 ```
 
@@ -150,7 +150,7 @@ cd apps/api
 pnpm db:migrate:test
 ```
 
-This creates `inkbox_test` on your local PostgreSQL instance and applies the schema. Requires `apps/api/.env.test` to be configured (credentials default to `postgres:password@localhost:5432`).
+This creates `hako_test` on your local PostgreSQL instance and applies the schema. Requires `apps/api/.env.test` to be configured (credentials default to `postgres:password@localhost:5432`).
 
 #### Running tests
 

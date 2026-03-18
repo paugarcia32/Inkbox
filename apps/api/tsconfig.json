@@ -1,5 +1,5 @@
 {
-  "extends": "@inkbox/config/nestjs",
+  "extends": "@hako/config/nestjs",
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "Node",

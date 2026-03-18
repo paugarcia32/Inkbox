@@ -43,7 +43,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="mb-8">
           <div className="mb-6">
-            <span className="text-2xl font-bold tracking-tight">inkbox</span>
+            <span className="text-2xl font-bold tracking-tight">hako</span>
           </div>
           <h1 className="text-2xl font-semibold leading-snug">Create an account</h1>
           <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">

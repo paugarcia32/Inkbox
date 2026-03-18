@@ -1,6 +1,6 @@
-# Inkbox — Brand & Design System
+# Hako — Brand & Design System
 
-> *The internet can wait.*
+> *Your box. Your internet.*
 
 ---
 
@@ -8,8 +8,9 @@
 
 | | |
 |---|---|
-| **Product name** | inkbox (lowercase in UI, "Inkbox" in text) |
-| **Tagline** | *The internet can wait.* |
+| **Product name** | hako (lowercase in UI, "Hako" in text) |
+| **Origin** | 箱 — Japanese for "box", "container" |
+| **Tagline** | *Your box. Your internet.* |
 | **Closing line** | *Save now. Read when it matters.* |
 | **Voice** | Calm, focused, minimal. Never pushy. |
 
@@ -38,7 +39,7 @@ Used for backgrounds, surfaces, text, and borders in both modes.
 
 ### Accent — Terracotta
 
-A single warm orange accent, inspired by Anthropic's brand palette. Used for CTAs, links, highlights, and key data points.
+A single warm orange accent. Used for CTAs, links, highlights, and key data points.
 
 | Token | Hex | Usage |
 |---|---|---|

@@ -122,7 +122,7 @@ export default function SettingsPage() {
 
         {/* Appearance */}
         <SectionCard>
-          <SectionHeader title="Appearance" description="Choose how Inkbox looks to you." />
+          <SectionHeader title="Appearance" description="Choose how Hako looks to you." />
           <div className="px-6 py-5">
             <ThemeSelector />
           </div>

@@ -1,5 +1,5 @@
 {
-  "extends": "@inkbox/config/base",
+  "extends": "@hako/config/base",
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

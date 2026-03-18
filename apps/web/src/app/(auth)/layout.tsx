@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           className="flex items-center gap-1.5 text-sm font-medium text-stone-500 dark:text-stone-400 transition hover:text-stone-900 dark:hover:text-stone-100"
         >
           <span>←</span>
-          <span>inkbox</span>
+          <span>hako</span>
         </Link>
       </div>
       <div className="absolute right-4 top-4">

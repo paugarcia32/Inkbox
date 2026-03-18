@@ -14,7 +14,7 @@ export default function HomePage() {
       {/* ── Header ─────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-10 border-b border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
-          <span className="text-lg font-bold tracking-tight">inkbox</span>
+          <span className="text-lg font-bold tracking-tight">hako</span>
           <nav className="flex items-center gap-2">
             <Link
               href="/login"
@@ -69,7 +69,7 @@ export default function HomePage() {
           <FeatureCard
             icon={<DocumentTextIcon className="size-5" />}
             title="Articles & News"
-            description="Save any article from the web. Inkbox strips away ads and distractions so you can read in a clean, focused view."
+            description="Save any article from the web. Hako strips away ads and distractions so you can read in a clean, focused view."
           />
           <FeatureCard
             icon={<XIcon />}
