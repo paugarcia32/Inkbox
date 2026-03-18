@@ -1,8 +1,9 @@
 'use client';
 
+import { useClickOutside } from '@/lib/use-click-outside';
 import { trpc } from '@/lib/trpc';
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 interface Props {
   collectionId: string;
@@ -20,7 +21,6 @@ function getHostname(url: string) {
 
 export function AddItemsToCollectionPopover({ collectionId, existingItemIds, onClose }: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
   const utils = trpc.useUtils();
 
@@ -33,21 +33,7 @@ export function AddItemsToCollectionPopover({ collectionId, existingItemIds, onC
     },
   });
 
-  // Close on click outside
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        onClose();
-      }
-    }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [onClose]);
-
-  // Focus search on open
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  useClickOutside(ref, onClose);
 
   const filtered = useMemo(() => {
     const available = (data?.items ?? []).filter((item) => !existingItemIds.has(item.id));
@@ -70,7 +56,7 @@ export function AddItemsToCollectionPopover({ collectionId, existingItemIds, onC
       <div className="flex items-center gap-2 border-b border-stone-100 px-3 py-2.5 dark:border-stone-800">
         <MagnifyingGlassIcon className="size-3.5 shrink-0 text-stone-400" />
         <input
-          ref={inputRef}
+          autoFocus
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}

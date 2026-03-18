@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-
 export default function AppError({
   error,
   reset,
@@ -9,9 +7,7 @@ export default function AppError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
+  console.error(error);
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 p-8">

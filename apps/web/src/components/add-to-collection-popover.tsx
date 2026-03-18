@@ -1,11 +1,12 @@
 'use client';
 
 import { getCollectionIcon } from '@/lib/collection-icons';
+import { useClickOutside } from '@/lib/use-click-outside';
 import { trpc } from '@/lib/trpc';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import type { Item } from '@hako/types';
 import { COLLECTION_COLORS } from '@hako/types';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 interface AddToCollectionPopoverProps {
   item: Item;
@@ -32,16 +33,7 @@ export function AddToCollectionPopover({ item, onClose }: AddToCollectionPopover
     },
   });
 
-  // Close on click outside
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        onClose();
-      }
-    }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [onClose]);
+  useClickOutside(ref, onClose);
 
   const inCollectionIds = new Set(item.collections?.map((c) => c.collectionId) ?? []);
 

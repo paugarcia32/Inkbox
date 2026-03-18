@@ -1,11 +1,12 @@
 'use client';
 
 import { signOut, useSession } from '@/lib/auth';
+import { useClickOutside } from '@/lib/use-click-outside';
 import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 export function UserMenu() {
   const { data: session, isPending } = useSession();
@@ -13,15 +14,7 @@ export function UserMenu() {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useClickOutside(wrapperRef, () => setOpen(false), open);
 
   async function handleSignOut() {
     setOpen(false);

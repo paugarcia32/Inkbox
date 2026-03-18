@@ -1,7 +1,8 @@
 'use client';
 
+import { useClickOutside } from '@/lib/use-click-outside';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 export type SortOption = 'date-desc' | 'date-asc' | 'alpha-asc' | 'alpha-desc';
 export type TypeFilter = 'all' | 'article' | 'youtube' | 'tweet' | 'pinterest' | 'link';
@@ -34,14 +35,7 @@ function Dropdown<T extends string>({ value, onChange, options, label }: Dropdow
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener('mousedown', handle);
-    return () => document.removeEventListener('mousedown', handle);
-  }, [open]);
+  useClickOutside(ref, () => setOpen(false), open);
 
   return (
     <div ref={ref} className="relative">
