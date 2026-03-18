@@ -79,7 +79,8 @@
       "Bash(cmd /c \"where psql\")",
       "Bash(cmd /c \"where /r \"\"C:\\\\Program Files\"\" psql.exe\")",
       "Read(//c/Program Files/**)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(pnpm add:*)"
     ]
   }
 }

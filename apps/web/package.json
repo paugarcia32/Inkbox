@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@heroicons/react": "^2.2.0",
     "@hako/types": "workspace:*",
     "@hako/utils": "workspace:*",
+    "@heroicons/react": "^2.2.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@tanstack/react-query": "^5.0.0",
     "@trpc/client": "^11.0.0",
@@ -29,6 +29,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "babel-plugin-react-compiler": "^1.0.0",
     "typescript": "^5.5.0"
   }
 }

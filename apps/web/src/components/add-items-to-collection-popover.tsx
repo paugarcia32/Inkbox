@@ -4,7 +4,7 @@ import { useClickOutside } from '@/lib/use-click-outside';
 import { trpc } from '@/lib/trpc';
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { getHostname } from '@hako/utils';
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface Props {
   collectionId: string;
@@ -28,14 +28,13 @@ export function AddItemsToCollectionPopover({ collectionId, existingItemIds, onC
 
   useClickOutside(ref, onClose);
 
-  const filtered = useMemo(() => {
-    const available = (data?.items ?? []).filter((item) => !existingItemIds.has(item.id));
-    if (!query.trim()) return available;
-    const q = query.toLowerCase();
-    return available.filter(
-      (item) => item.title?.toLowerCase().includes(q) || item.url.toLowerCase().includes(q),
-    );
-  }, [data?.items, existingItemIds, query]);
+  const available = (data?.items ?? []).filter((item) => !existingItemIds.has(item.id));
+  const q = query.toLowerCase();
+  const filtered = !q.trim()
+    ? available
+    : available.filter(
+        (item) => item.title?.toLowerCase().includes(q) || item.url.toLowerCase().includes(q),
+      );
 
   return (
     <div

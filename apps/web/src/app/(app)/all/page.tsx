@@ -11,7 +11,7 @@ import { buildGroups } from '@/lib/grouping-utils';
 import { trpc } from '@/lib/trpc';
 import { ChevronRightIcon, SquaresPlusIcon } from '@heroicons/react/24/outline';
 import type { Item } from '@hako/types';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 export default function AllPage() {
   const [showArchived, setShowArchived] = useState(false);
@@ -36,10 +36,7 @@ export default function AllPage() {
     data?.items ?? [],
   );
 
-  const groups = useMemo(
-    () => (groupBy !== 'none' ? buildGroups(items, groupBy) : null),
-    [items, groupBy],
-  );
+  const groups = groupBy !== 'none' ? buildGroups(items, groupBy) : null;
 
   return (
     <>

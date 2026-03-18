@@ -13,7 +13,7 @@ import { ArrowLeftIcon, InboxIcon, PlusIcon } from '@heroicons/react/24/outline'
 import type { Item } from '@hako/types';
 import { COLLECTION_COLORS } from '@hako/types';
 import Link from 'next/link';
-import { use, useMemo, useRef, useState } from 'react';
+import { use, useRef, useState } from 'react';
 
 export default function CollectionDetailPage({
   params,
@@ -45,7 +45,7 @@ export default function CollectionDetailPage({
     ? (COLLECTION_COLORS.find((c) => c.id === collection.color)?.hex ?? '#78716c')
     : '#78716c';
 
-  const existingItemIds = useMemo(() => new Set(data?.items.map((i) => i.id) ?? []), [data?.items]);
+  const existingItemIds = new Set(data?.items.map((i) => i.id) ?? []);
 
   const { sort, setSort, typeFilter, setTypeFilter, filtered: items } = useItemFiltering(
     data?.items ?? [],
