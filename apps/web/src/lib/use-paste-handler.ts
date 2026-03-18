@@ -3,6 +3,7 @@
 import { useCallback, useEffect } from 'react';
 
 export function usePasteHandler(onUrl: (url: string) => void) {
+  // biome-ignore lint/correctness/useExhaustiveDependencies: onUrl is the dependency being stabilized
   const stable = useCallback(onUrl, [onUrl]);
 
   useEffect(() => {

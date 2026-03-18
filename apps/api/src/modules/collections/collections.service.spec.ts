@@ -59,6 +59,7 @@ describe('CollectionsService', () => {
 
       const page2 = await service.findAll(user.id, {
         limit: 3,
+        // biome-ignore lint/style/noNonNullAssertion: nextCursor presence is asserted on the line above
         cursor: page1.nextCursor!,
       });
 
@@ -147,6 +148,7 @@ describe('CollectionsService', () => {
         shareToken: 'private-token',
       });
 
+      // biome-ignore lint/style/noNonNullAssertion: shareToken is set explicitly in test factory
       const result = await service.findByShareToken(col.shareToken!);
       expect(result).toBeNull();
     });
@@ -165,9 +167,9 @@ describe('CollectionsService', () => {
       const result = await service.findByShareToken('public-share-token');
 
       expect(result).not.toBeNull();
-      expect(result!.id).toBe(col.id);
-      expect(result!.items).toHaveLength(1);
-      expect(result!.items[0]?.item.id).toBe(item.id);
+      expect(result?.id).toBe(col.id);
+      expect(result?.items).toHaveLength(1);
+      expect(result?.items[0]?.item.id).toBe(item.id);
     });
   });
 });

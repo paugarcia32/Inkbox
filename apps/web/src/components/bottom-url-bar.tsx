@@ -8,7 +8,7 @@ interface BottomUrlBarProps {
   /** If set, newly created items are immediately added to this collection. */
   collectionId?: string;
   /** Used in the success toast: "Saved to [name]". Falls back to "Saved!" if absent. */
-  collectionName?: string;
+  collectionName?: string | undefined;
   /** When true (archive page), success toast reads "Saved to Inbox" instead of "Saved!". */
   inboxOnlyMessage?: boolean;
 }
@@ -41,6 +41,7 @@ export function BottomUrlBar({
       const t = setTimeout(() => setToast(null), 2000);
       return () => clearTimeout(t);
     }
+    return;
   }, [toast]);
 
   function submit(value: string) {

@@ -68,7 +68,8 @@
       "Bash(pnpm --filter @inkbox/web typecheck)",
       "Bash(pnpm --filter @inkbox/api typecheck)",
       "Bash(pnpm --filter @inkbox/types typecheck)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(grep -r \"updateUser\\\\|from ''@/lib/auth''\" src/ --include=\"*.tsx\" --include=\"*.ts\" -n)"
     ]
   }
 }

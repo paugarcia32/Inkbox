@@ -54,6 +54,17 @@
           }
         }
       }
+    },
+    {
+      "include": ["apps/web/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noAutofocus": "off",
+            "useSemanticElements": "off"
+          }
+        }
+      }
     }
   ]
 }

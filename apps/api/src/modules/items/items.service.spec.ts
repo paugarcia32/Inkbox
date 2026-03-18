@@ -208,6 +208,7 @@ describe('ItemsService', () => {
 
       const page2 = await service.findAll(user.id, {
         limit: 3,
+        // biome-ignore lint/style/noNonNullAssertion: nextCursor presence is asserted on the line above
         cursor: page1.nextCursor!,
       });
 

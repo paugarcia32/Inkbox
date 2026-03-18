@@ -48,8 +48,10 @@ export function AddToCollectionPopover({ item, onClose }: AddToCollectionPopover
   return (
     <div
       ref={ref}
+      role="presentation"
       className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-lg border border-stone-200 bg-white py-1 shadow-lg dark:border-stone-700 dark:bg-stone-900"
       onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
     >
       {isLoading && <p className="px-3 py-2 text-xs text-stone-400">Loading…</p>}
 

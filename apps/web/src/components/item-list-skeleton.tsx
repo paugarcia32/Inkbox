@@ -21,9 +21,9 @@ export function ItemListSkeleton({ count = 5 }: { count?: number }) {
   return (
     <ul className="space-y-0.5">
       {Array.from({ length: count }).map((_, i) => {
-        const [titlePct, domainPct] = ROWS[i % ROWS.length];
+        const [titlePct, domainPct] = ROWS[i % ROWS.length] ?? [44, 16];
         return (
-          <li key={i} className="flex h-10 items-center gap-3 px-2">
+          <li key={titlePct} className="flex h-10 items-center gap-3 px-2">
             {/* Favicon */}
             <div className="size-4 shrink-0 rounded bg-stone-200 animate-pulse dark:bg-stone-700/70" />
             {/* Title */}

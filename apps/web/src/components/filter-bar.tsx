@@ -70,6 +70,7 @@ function Dropdown<T extends string>({ value, onChange, options, label }: Dropdow
       {open && (
         <div
           role="listbox"
+          tabIndex={-1}
           className="absolute left-0 top-full z-50 mt-1 min-w-[7rem] overflow-hidden rounded-lg border border-stone-200 bg-white py-1 shadow-lg dark:border-stone-700 dark:bg-stone-900"
         >
           {options.map((opt) => (
@@ -159,7 +160,7 @@ export function FilterBar({
 
       {/* Archived toggle — only on All page */}
       {showArchived !== undefined && onToggleArchived && (
-        <label className="flex cursor-pointer items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+        <div className="flex cursor-pointer items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
           <span>Show archived</span>
           <button
             type="button"
@@ -178,7 +179,7 @@ export function FilterBar({
               ].join(' ')}
             />
           </button>
-        </label>
+        </div>
       )}
     </div>
   );

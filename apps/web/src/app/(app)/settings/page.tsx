@@ -1,7 +1,7 @@
 'use client';
 
 import { ThemeSelector } from '@/components/theme-selector';
-import { signOut, updateUser, useSession } from '@/lib/auth';
+import { authClient, signOut, useSession } from '@/lib/auth';
 import { trpc } from '@/lib/trpc';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -44,7 +44,7 @@ export default function SettingsPage() {
     if (!name.trim()) return;
     setNamePending(true);
     setNameError(false);
-    const { error } = await updateUser({ name: name.trim() });
+    const { error } = await authClient.updateUser({ name: name.trim() });
     setNamePending(false);
     if (error) {
       setNameError(true);
@@ -93,9 +93,9 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-stone-700 dark:text-stone-300">
+                <p className="mb-1.5 block text-sm font-medium text-stone-700 dark:text-stone-300">
                   Email
-                </label>
+                </p>
                 <p className="rounded-lg border border-stone-200 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-500 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-400">
                   {session.user.email}
                 </p>

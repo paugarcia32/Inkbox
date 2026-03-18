@@ -37,12 +37,12 @@ function buildGroups(items: Item[], groupBy: GroupBy): Group[] {
     for (const item of items) {
       const bucket = getDateBucket(item.createdAt);
       if (!map.has(bucket)) map.set(bucket, []);
-      map.get(bucket)!.push(item);
+      map.get(bucket)?.push(item);
     }
     return DATE_BUCKET_ORDER.filter((b) => map.has(b)).map((b) => ({
       key: b,
       label: b,
-      items: map.get(b)!,
+      items: map.get(b) ?? [],
     }));
   }
 
@@ -52,13 +52,13 @@ function buildGroups(items: Item[], groupBy: GroupBy): Group[] {
       const cols = item.collections;
       if (!cols || cols.length === 0) {
         if (!map.has('__none__')) map.set('__none__', { label: 'No collection', items: [] });
-        map.get('__none__')!.items.push(item);
+        map.get('__none__')?.items.push(item);
       } else {
         // Appear in every collection the item belongs to
         for (const col of cols) {
           if (!map.has(col.collectionId))
             map.set(col.collectionId, { label: col.collectionName, items: [] });
-          map.get(col.collectionId)!.items.push(item);
+          map.get(col.collectionId)?.items.push(item);
         }
       }
     }
@@ -68,7 +68,11 @@ function buildGroups(items: Item[], groupBy: GroupBy): Group[] {
     }
     groups.sort((a, b) => a.label.localeCompare(b.label));
     if (map.has('__none__')) {
-      groups.push({ key: '__none__', label: 'No collection', items: map.get('__none__')!.items });
+      groups.push({
+        key: '__none__',
+        label: 'No collection',
+        items: map.get('__none__')?.items ?? [],
+      });
     }
     return groups;
   }

@@ -15,7 +15,16 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps) {
   return (
     <>
       {/* Backdrop */}
-      {isOpen && <div className="fixed inset-0 z-30" onClick={onClose} />}
+      {isOpen && (
+        <div
+          role="presentation"
+          className="fixed inset-0 z-30"
+          onClick={onClose}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') onClose();
+          }}
+        />
+      )}
 
       {/* Panel */}
       <div

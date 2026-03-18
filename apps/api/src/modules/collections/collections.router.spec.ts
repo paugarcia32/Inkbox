@@ -163,6 +163,7 @@ describe('collections tRPC router', () => {
       });
       const caller = await getCaller();
 
+      // biome-ignore lint/style/noNonNullAssertion: shareToken is set explicitly in test factory
       const result = await caller.collections.byShareToken({ token: col.shareToken! });
 
       expect(result).toBeNull();
@@ -183,8 +184,8 @@ describe('collections tRPC router', () => {
       const result = await caller.collections.byShareToken({ token: 'public-token-abc' });
 
       expect(result).not.toBeNull();
-      expect(result!.id).toBe(col.id);
-      expect(result!.items).toHaveLength(1);
+      expect(result?.id).toBe(col.id);
+      expect(result?.items).toHaveLength(1);
     });
 
     it('can be called without any userId in context', async () => {

@@ -44,6 +44,7 @@ export function ItemsSection({ isLoading, isFetching, children, skeleton }: Item
       setSkeletonMounted(true);
       setSkeletonExiting(false);
     }
+    return;
   }, [isLoading, skeletonMounted]);
 
   return (

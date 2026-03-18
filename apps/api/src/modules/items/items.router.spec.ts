@@ -118,6 +118,7 @@ describe('items tRPC router', () => {
       const caller = await getCaller(user.id);
 
       const page1 = await caller.items.list({ limit: 3 });
+      // biome-ignore lint/style/noNonNullAssertion: nextCursor presence is asserted above
       const page2 = await caller.items.list({ limit: 3, cursor: page1.nextCursor! });
 
       const page1Ids = new Set(page1.items.map((i) => i.id));
