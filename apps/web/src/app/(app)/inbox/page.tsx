@@ -2,12 +2,10 @@
 
 import { BottomUrlBar } from '@/components/bottom-url-bar';
 import { FilterBar } from '@/components/filter-bar';
-import { ItemDetailPanel } from '@/components/item-detail-panel';
 import { ItemRow } from '@/components/item-row';
 import { ItemsSection } from '@/components/items-section';
 import { useItemFiltering } from '@/hooks/use-item-filtering';
 import { trpc } from '@/lib/trpc';
-import type { Item } from '@hako/types';
 import { InboxArrowDownIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
@@ -23,7 +21,6 @@ export default function InboxPage() {
           : false,
     },
   );
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const {
@@ -74,7 +71,6 @@ export default function InboxPage() {
                     key={item.id}
                     item={item}
                     showCollection={false}
-                    onOpen={setSelectedItem}
                     hoveredId={hoveredId}
                     onHoverChange={setHoveredId}
                   />
@@ -85,8 +81,7 @@ export default function InboxPage() {
         )}
       </div>
 
-      <ItemDetailPanel item={selectedItem} onClose={() => setSelectedItem(null)} />
-      <BottomUrlBar onSelectItem={setSelectedItem} />
+      <BottomUrlBar />
     </>
   );
 }

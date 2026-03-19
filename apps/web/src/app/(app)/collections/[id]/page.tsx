@@ -3,13 +3,11 @@
 import { AddItemsToCollectionPopover } from '@/components/add-items-to-collection-popover';
 import { BottomUrlBar } from '@/components/bottom-url-bar';
 import { FilterBar } from '@/components/filter-bar';
-import { ItemDetailPanel } from '@/components/item-detail-panel';
 import { ItemRow } from '@/components/item-row';
 import { ItemsSection } from '@/components/items-section';
 import { useItemFiltering } from '@/hooks/use-item-filtering';
 import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
-import type { Item } from '@hako/types';
 import { COLLECTION_COLORS } from '@hako/types';
 import { ArrowLeftIcon, InboxIcon, PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -38,7 +36,6 @@ export default function CollectionDetailPage({
           : false,
     },
   );
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const colorHex = collection
@@ -151,7 +148,6 @@ export default function CollectionDetailPage({
                     item={item}
                     showCollection={false}
                     showArchivedBadge={showArchived}
-                    onOpen={setSelectedItem}
                     hoveredId={hoveredId}
                     onHoverChange={setHoveredId}
                   />
@@ -162,12 +158,7 @@ export default function CollectionDetailPage({
         )}
       </div>
 
-      <ItemDetailPanel item={selectedItem} onClose={() => setSelectedItem(null)} />
-      <BottomUrlBar
-        collectionId={id}
-        collectionName={collection?.name}
-        onSelectItem={setSelectedItem}
-      />
+      <BottomUrlBar collectionId={id} collectionName={collection?.name} />
     </>
   );
 }

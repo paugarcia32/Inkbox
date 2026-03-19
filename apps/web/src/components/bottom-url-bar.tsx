@@ -1,9 +1,11 @@
 'use client';
 
+import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
 import { usePasteHandler } from '@/lib/use-paste-handler';
-import type { Collection, Item } from '@hako/types';
+import { COLLECTION_COLORS } from '@hako/types';
 import { getFaviconUrl, getHostname } from '@hako/utils';
+import { ArchiveBoxIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -14,8 +16,6 @@ interface BottomUrlBarProps {
   collectionName?: string | undefined;
   /** When true (archive page), success toast reads "Saved to Inbox" instead of "Saved!". */
   inboxOnlyMessage?: boolean;
-  /** Called when the user selects an item from search results. */
-  onSelectItem?: (item: Item) => void;
 }
 
 function isUrl(value: string): boolean {
@@ -23,18 +23,41 @@ function isUrl(value: string): boolean {
   if (!v) return false;
   if (/^https?:\/\//i.test(v)) return true;
   if (/^www\./i.test(v)) return true;
-  // something.tld with no spaces
   if (!v.includes(' ') && /\.[a-z]{2,}(\/|$)/i.test(v)) return true;
   return false;
 }
 
 type SearchMode = 'idle' | 'url' | 'search';
 
+type SearchItem = {
+  id: string;
+  url: string;
+  title: string | null;
+  isArchived: boolean;
+  collections?: Array<{
+    collectionId: string;
+    collectionName: string;
+    collectionColor: string;
+    collectionIcon: string | null;
+  }>;
+};
+
+type SearchCollection = {
+  id: string;
+  name: string;
+  icon: string | null;
+  color: string;
+  itemCount: number;
+};
+
+type SearchResult =
+  | { type: 'item'; data: SearchItem }
+  | { type: 'collection'; data: SearchCollection };
+
 export function BottomUrlBar({
   collectionId,
   collectionName,
   inboxOnlyMessage,
-  onSelectItem,
 }: BottomUrlBarProps) {
   const [value, setValue] = useState('');
   const [toast, setToast] = useState<'saved' | 'error' | null>(null);
@@ -42,7 +65,6 @@ export function BottomUrlBar({
   const [activeIndex, setActiveIndex] = useState(-1);
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const utils = trpc.useUtils();
 
@@ -77,18 +99,17 @@ export function BottomUrlBar({
     { enabled: mode === 'search' && debouncedQuery.length >= 2 },
   );
 
-  const allResults: Array<{ type: 'item'; data: Item } | { type: 'collection'; data: Collection }> =
-    useMemo(() => {
-      const items = (itemResults.data ?? []).map((data) => ({
-        type: 'item' as const,
-        data: data as unknown as Item,
-      }));
-      const collections = (collectionResults.data ?? []).map((data) => ({
-        type: 'collection' as const,
-        data: data as Collection,
-      }));
-      return [...items, ...collections];
-    }, [itemResults.data, collectionResults.data]);
+  const allResults: SearchResult[] = useMemo(() => {
+    const items = (itemResults.data ?? []).map((data) => ({
+      type: 'item' as const,
+      data: data as SearchItem,
+    }));
+    const collections = (collectionResults.data ?? []).map((data) => ({
+      type: 'collection' as const,
+      data: data as SearchCollection,
+    }));
+    return [...items, ...collections];
+  }, [itemResults.data, collectionResults.data]);
 
   const create = trpc.items.create.useMutation({
     onSuccess: () => {
@@ -154,14 +175,12 @@ export function BottomUrlBar({
   function selectResult(index: number) {
     const result = allResults[index];
     if (!result) return;
+    setValue('');
+    setIsOpen(false);
     if (result.type === 'item') {
-      onSelectItem?.(result.data);
-      setValue('');
-      setIsOpen(false);
+      window.open(result.data.url, '_blank', 'noopener,noreferrer');
     } else {
       router.push(`/collections/${result.data.id}`);
-      setValue('');
-      setIsOpen(false);
     }
   }
 
@@ -216,29 +235,24 @@ export function BottomUrlBar({
     <div className="smart-bar-root fixed bottom-0 left-0 right-0 z-30 border-t border-stone-200 bg-stone-50/90 backdrop-blur-sm dark:border-stone-800 dark:bg-stone-900/90">
       {/* Search results panel */}
       {showPanel && (
-        <div
-          ref={panelRef}
-          className="absolute bottom-full left-0 right-0 mx-auto max-w-3xl px-6 pb-1"
-        >
+        <div className="absolute bottom-full left-0 right-0 mx-auto max-w-3xl px-6 pb-1">
           <div className="overflow-hidden rounded-xl border border-stone-200 bg-stone-50 shadow-lg dark:border-stone-700 dark:bg-stone-900">
             {/* URL mode: save hint */}
             {mode === 'url' && (
               <button
                 type="button"
-                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition-colors hover:bg-stone-100 dark:hover:bg-stone-800"
+                className="flex h-10 w-full items-center gap-3 px-3 text-left text-sm transition-colors hover:bg-stone-100 dark:hover:bg-stone-800"
                 onClick={() => submitUrl(value)}
               >
-                <span className="flex h-7 w-7 items-center justify-center rounded-md bg-stone-200 text-base dark:bg-stone-700">
+                <span className="flex size-4 shrink-0 items-center justify-center text-stone-400">
                   +
                 </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium text-stone-800 dark:text-stone-200">
-                    Save this link
-                  </p>
-                  <p className="truncate text-xs text-stone-500 dark:text-stone-400">
-                    {value.trim()}
-                  </p>
-                </div>
+                <span className="min-w-0 flex-1 truncate font-medium text-stone-800 dark:text-stone-200">
+                  Save this link
+                </span>
+                <span className="shrink-0 truncate text-xs text-stone-400 dark:text-stone-500">
+                  {value.trim()}
+                </span>
                 <span className="shrink-0 text-xs text-stone-400">Enter</span>
               </button>
             )}
@@ -247,98 +261,144 @@ export function BottomUrlBar({
             {mode === 'search' && debouncedQuery.length >= 2 && (
               <>
                 {isSearching && !hasSearchResults && (
-                  <p className="px-4 py-3 text-sm text-stone-400">Searching…</p>
+                  <p className="px-3 py-2.5 text-sm text-stone-400">Searching…</p>
                 )}
                 {!isSearching && !hasSearchResults && (
-                  <p className="px-4 py-3 text-sm text-stone-400">
-                    No results for "{debouncedQuery}"
+                  <p className="px-3 py-2.5 text-sm text-stone-400">
+                    No results for &quot;{debouncedQuery}&quot;
                   </p>
                 )}
-                {(itemResults.data?.length ?? 0) > 0 && (
-                  <div>
-                    <p className="px-4 pb-1 pt-2.5 text-xs font-medium uppercase tracking-wide text-stone-400">
-                      Items
-                    </p>
-                    {itemResults.data?.map((item, i) => {
-                      const globalIdx = i;
-                      const favicon = getFaviconUrl(item.url);
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
-                            activeIndex === globalIdx
-                              ? 'bg-stone-100 dark:bg-stone-800'
-                              : 'hover:bg-stone-100 dark:hover:bg-stone-800'
-                          }`}
-                          onClick={() => selectResult(globalIdx)}
-                          onMouseEnter={() => setActiveIndex(globalIdx)}
-                        >
-                          <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-md bg-stone-200 dark:bg-stone-700">
-                            {favicon ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img src={favicon} alt="" className="h-4 w-4 object-contain" />
+                {itemResults.data?.map((item, i) => {
+                  const favicon = getFaviconUrl(item.url);
+                  const hostname = getHostname(item.url);
+                  const cols = (item as SearchItem).collections ?? [];
+                  const firstCol = cols[0];
+                  const isActive = activeIndex === i;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={`flex h-10 w-full items-center gap-3 px-3 text-left text-sm transition-colors ${
+                        isActive
+                          ? 'bg-stone-100 dark:bg-stone-800'
+                          : 'hover:bg-stone-100 dark:hover:bg-stone-800'
+                      }`}
+                      onClick={() => selectResult(i)}
+                      onMouseEnter={() => setActiveIndex(i)}
+                    >
+                      {/* Favicon */}
+                      <div className="flex size-4 shrink-0 items-center justify-center">
+                        {favicon ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={favicon} alt="" className="size-4 rounded-sm" />
+                        ) : (
+                          <GlobeAltIcon className="size-4 text-stone-400" />
+                        )}
+                      </div>
+                      {/* Title */}
+                      <span className="min-w-0 flex-1 truncate font-medium text-stone-800 dark:text-stone-100">
+                        {item.title?.trim() || hostname}
+                      </span>
+                      {/* Archived badge */}
+                      {(item as SearchItem).isArchived && (
+                        <ArchiveBoxIcon className="size-3 shrink-0 text-stone-300 dark:text-stone-600" />
+                      )}
+                      {/* Collection badge */}
+                      {firstCol && cols.length === 1 && (
+                        <span className="flex shrink-0 items-center gap-1 text-xs text-stone-400 dark:text-stone-500">
+                          {(() => {
+                            const hex =
+                              COLLECTION_COLORS.find((c) => c.id === firstCol.collectionColor)
+                                ?.hex ?? '#78716c';
+                            const ColIcon = getCollectionIcon(firstCol.collectionIcon);
+                            return ColIcon ? (
+                              <ColIcon className="size-3 shrink-0" style={{ color: hex }} />
                             ) : (
-                              <span className="text-xs text-stone-400">🔗</span>
-                            )}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate font-medium text-stone-800 dark:text-stone-200">
-                              {item.title ?? getHostname(item.url)}
-                            </p>
-                            <p className="truncate text-xs text-stone-500 dark:text-stone-400">
-                              {getHostname(item.url)}
-                              {item.isArchived && (
-                                <span className="ml-1.5 text-stone-400 dark:text-stone-500">
-                                  · archived
-                                </span>
-                              )}
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-                {(collectionResults.data?.length ?? 0) > 0 && (
-                  <div>
-                    <p className="px-4 pb-1 pt-2.5 text-xs font-medium uppercase tracking-wide text-stone-400">
-                      Collections
-                    </p>
-                    {collectionResults.data?.map((col, i) => {
-                      const globalIdx = (itemResults.data?.length ?? 0) + i;
-                      return (
-                        <button
-                          key={col.id}
-                          type="button"
-                          className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
-                            activeIndex === globalIdx
-                              ? 'bg-stone-100 dark:bg-stone-800'
-                              : 'hover:bg-stone-100 dark:hover:bg-stone-800'
-                          }`}
-                          onClick={() => selectResult(globalIdx)}
-                          onMouseEnter={() => setActiveIndex(globalIdx)}
-                        >
-                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-stone-200 text-base dark:bg-stone-700">
-                            {col.icon ?? '📁'}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate font-medium text-stone-800 dark:text-stone-200">
-                              {col.name}
-                            </p>
-                            <p className="truncate text-xs text-stone-500 dark:text-stone-400">
-                              {col.itemCount} {col.itemCount === 1 ? 'item' : 'items'}
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                              <span
+                                className="size-1.5 shrink-0 rounded-full"
+                                style={{ background: hex }}
+                              />
+                            );
+                          })()}
+                          {firstCol.collectionName}
+                        </span>
+                      )}
+                      {cols.length > 1 && (
+                        <span className="flex shrink-0 items-center gap-0.5">
+                          {cols.slice(0, 3).map((c) => {
+                            const hex =
+                              COLLECTION_COLORS.find((col) => col.id === c.collectionColor)?.hex ??
+                              '#78716c';
+                            const ColIcon = getCollectionIcon(c.collectionIcon);
+                            return ColIcon ? (
+                              <ColIcon
+                                key={c.collectionId}
+                                className="size-3 shrink-0"
+                                style={{ color: hex }}
+                              />
+                            ) : (
+                              <span
+                                key={c.collectionId}
+                                className="size-1.5 shrink-0 rounded-full"
+                                style={{ background: hex }}
+                              />
+                            );
+                          })}
+                        </span>
+                      )}
+                      {/* Hostname */}
+                      <span className="shrink-0 text-xs text-stone-400 dark:text-stone-500">
+                        {hostname}
+                      </span>
+                    </button>
+                  );
+                })}
+                {collectionResults.data?.map((col, i) => {
+                  const globalIdx = (itemResults.data?.length ?? 0) + i;
+                  const isActive = activeIndex === globalIdx;
+                  const hex =
+                    COLLECTION_COLORS.find((c) => c.id === (col as SearchCollection).color)?.hex ??
+                    '#78716c';
+                  const ColIcon = getCollectionIcon((col as SearchCollection).icon);
+                  return (
+                    <button
+                      key={col.id}
+                      type="button"
+                      className={`flex h-10 w-full items-center gap-3 px-3 text-left text-sm transition-colors ${
+                        isActive
+                          ? 'bg-stone-100 dark:bg-stone-800'
+                          : 'hover:bg-stone-100 dark:hover:bg-stone-800'
+                      }`}
+                      onClick={() => selectResult(globalIdx)}
+                      onMouseEnter={() => setActiveIndex(globalIdx)}
+                    >
+                      {/* Collection icon */}
+                      <div className="flex size-4 shrink-0 items-center justify-center">
+                        {ColIcon ? (
+                          <ColIcon className="size-4" style={{ color: hex }} />
+                        ) : (
+                          <span
+                            className="size-2 shrink-0 rounded-full"
+                            style={{ background: hex }}
+                          />
+                        )}
+                      </div>
+                      {/* Name */}
+                      <span className="min-w-0 flex-1 truncate font-medium text-stone-800 dark:text-stone-100">
+                        {col.name}
+                      </span>
+                      {/* Item count */}
+                      <span className="shrink-0 text-xs text-stone-400 dark:text-stone-500">
+                        {(col as SearchCollection).itemCount}{' '}
+                        {(col as SearchCollection).itemCount === 1 ? 'item' : 'items'}
+                      </span>
+                    </button>
+                  );
+                })}
               </>
             )}
             {mode === 'search' && debouncedQuery.length < 2 && value.trim().length > 0 && (
-              <p className="px-4 py-3 text-sm text-stone-400">Keep typing to search…</p>
+              <p className="px-3 py-2.5 text-sm text-stone-400">Keep typing to search…</p>
             )}
           </div>
         </div>

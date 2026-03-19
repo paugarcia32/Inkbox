@@ -2,12 +2,10 @@
 
 import { BottomUrlBar } from '@/components/bottom-url-bar';
 import { FilterBar } from '@/components/filter-bar';
-import { ItemDetailPanel } from '@/components/item-detail-panel';
 import { ItemRow } from '@/components/item-row';
 import { ItemsSection } from '@/components/items-section';
 import { useItemFiltering } from '@/hooks/use-item-filtering';
 import { trpc } from '@/lib/trpc';
-import type { Item } from '@hako/types';
 import { ArchiveBoxIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
@@ -15,7 +13,6 @@ export default function ArchivePage() {
   const { data, isLoading, isError, refetch } = trpc.items.list.useQuery({
     archivedOnly: true,
   });
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const {
@@ -66,7 +63,6 @@ export default function ArchivePage() {
                     key={item.id}
                     item={item}
                     showCollection={true}
-                    onOpen={setSelectedItem}
                     hoveredId={hoveredId}
                     onHoverChange={setHoveredId}
                   />
@@ -77,8 +73,7 @@ export default function ArchivePage() {
         )}
       </div>
 
-      <ItemDetailPanel item={selectedItem} onClose={() => setSelectedItem(null)} />
-      <BottomUrlBar inboxOnlyMessage onSelectItem={setSelectedItem} />
+      <BottomUrlBar inboxOnlyMessage />
     </>
   );
 }

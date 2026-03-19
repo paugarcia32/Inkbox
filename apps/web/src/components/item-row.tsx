@@ -74,7 +74,6 @@ interface ItemRowProps {
   showCollection?: boolean;
   /** Show a subtle archive indicator when item.isArchived is true */
   showArchivedBadge?: boolean;
-  onOpen: (item: Item) => void;
   /** ID of whichever item is currently hovered in the list (managed by parent) */
   hoveredId: string | null;
   onHoverChange: (id: string | null) => void;
@@ -84,7 +83,6 @@ export function ItemRow({
   item,
   showCollection = false,
   showArchivedBadge = false,
-  onOpen,
   hoveredId,
   onHoverChange,
 }: ItemRowProps) {
@@ -138,12 +136,14 @@ export function ItemRow({
         isActive ? 'bg-stone-100/70 dark:bg-stone-800/60' : '',
       ].join(' ')}
     >
-      {/* Full-row click target — sits behind all interactive children */}
-      <button
-        type="button"
+      {/* Full-row click target — opens the saved URL. aria-label provides accessible content. */}
+      {/* biome-ignore lint/a11y/useAnchorContent: aria-label provides accessible content */}
+      <a
+        href={item.url}
+        target="_blank"
+        rel="noopener noreferrer"
         aria-label={`Open ${item.title ?? item.url}`}
-        onClick={() => onOpen(item)}
-        className="absolute inset-0 cursor-pointer rounded-lg"
+        className="absolute inset-0 rounded-lg"
       />
 
       <div
