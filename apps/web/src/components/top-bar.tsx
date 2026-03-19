@@ -29,6 +29,24 @@ const NAV_ITEMS: NavItem[] = [
 export function TopBar() {
   const pathname = usePathname();
   const { data: counts } = trpc.items.count.useQuery();
+  const trpcUtils = trpc.useUtils();
+
+  function handleMouseEnter(href: string) {
+    switch (href) {
+      case '/inbox':
+        void trpcUtils.items.list.prefetch({ inboxOnly: true });
+        break;
+      case '/all':
+        void trpcUtils.items.list.prefetch({});
+        break;
+      case '/collections':
+        void trpcUtils.collections.list.prefetch({});
+        break;
+      case '/archive':
+        void trpcUtils.items.list.prefetch({ archivedOnly: true });
+        break;
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-stone-50 dark:bg-stone-900">
@@ -42,6 +60,7 @@ export function TopBar() {
               <Link
                 key={href}
                 href={href}
+                onMouseEnter={() => handleMouseEnter(href)}
                 className={[
                   'relative flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors',
                   active
