@@ -1,12 +1,13 @@
 'use client';
 
 import { useClickOutside } from '@/lib/use-click-outside';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ListBulletIcon, RectangleStackIcon } from '@heroicons/react/24/outline';
 import { useEffect, useRef, useState } from 'react';
 
 export type SortOption = 'date-desc' | 'date-asc' | 'alpha-asc' | 'alpha-desc';
 export type TypeFilter = 'all' | 'link' | 'article' | 'video' | 'image' | 'post';
 export type GroupBy = 'none' | 'date' | 'collection';
+export type ViewMode = 'sections' | 'flat';
 
 const SORT_LABELS: Record<SortOption, string> = {
   'date-desc': 'Newest',
@@ -134,6 +135,8 @@ interface FilterBarProps {
   onTypeFilterChange: (v: TypeFilter) => void;
   groupBy?: GroupBy;
   onGroupByChange?: (v: GroupBy) => void;
+  viewMode?: ViewMode | undefined;
+  onViewModeChange?: ((v: ViewMode) => void) | undefined;
   showArchived?: boolean;
   onToggleArchived?: () => void;
   pendingFilterOpen?: 'sort' | 'type' | 'group' | null;
@@ -147,6 +150,8 @@ export function FilterBar({
   onTypeFilterChange,
   groupBy,
   onGroupByChange,
+  viewMode,
+  onViewModeChange,
   showArchived,
   onToggleArchived,
   pendingFilterOpen,
@@ -182,6 +187,38 @@ export function FilterBar({
       )}
 
       <div className="flex-1" />
+
+      {/* View mode toggle — sections vs flat */}
+      {viewMode !== undefined && onViewModeChange && (
+        <div className="flex items-center rounded-md border border-stone-200 dark:border-stone-700">
+          <button
+            type="button"
+            title="Sections view"
+            onClick={() => onViewModeChange('sections')}
+            className={[
+              'rounded-l-md p-1 transition-colors duration-150',
+              viewMode === 'sections'
+                ? 'bg-stone-200 text-stone-700 dark:bg-stone-700 dark:text-stone-200'
+                : 'text-stone-400 hover:text-stone-600 dark:text-stone-500 dark:hover:text-stone-300',
+            ].join(' ')}
+          >
+            <RectangleStackIcon className="size-3.5" />
+          </button>
+          <button
+            type="button"
+            title="Flat list view"
+            onClick={() => onViewModeChange('flat')}
+            className={[
+              'rounded-r-md p-1 transition-colors duration-150',
+              viewMode === 'flat'
+                ? 'bg-stone-200 text-stone-700 dark:bg-stone-700 dark:text-stone-200'
+                : 'text-stone-400 hover:text-stone-600 dark:text-stone-500 dark:hover:text-stone-300',
+            ].join(' ')}
+          >
+            <ListBulletIcon className="size-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* Archived toggle — only on All page */}
       {showArchived !== undefined && onToggleArchived && (

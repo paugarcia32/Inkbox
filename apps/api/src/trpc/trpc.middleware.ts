@@ -3,6 +3,7 @@ import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import type { NextFunction, Request, Response } from 'express';
 import { CollectionsRouter } from '../modules/collections/collections.router';
 import { ItemsRouter } from '../modules/items/items.router';
+import { SectionsRouter } from '../modules/sections/sections.router';
 import { UsersRouter } from '../modules/users/users.router';
 import { TrpcService } from './trpc.service';
 
@@ -10,11 +11,13 @@ function createAppRouter(
   trpc: TrpcService,
   items: ItemsRouter,
   collections: CollectionsRouter,
+  sections: SectionsRouter,
   users: UsersRouter,
 ) {
   return trpc.mergeRouters(
     trpc.router({ items: items.router }),
     trpc.router({ collections: collections.router }),
+    trpc.router({ sections: sections.router }),
     trpc.router({ users: users.router }),
   );
 }
@@ -29,9 +32,16 @@ export class TrpcMiddleware implements NestMiddleware {
     private readonly trpc: TrpcService,
     private readonly items: ItemsRouter,
     private readonly collections: CollectionsRouter,
+    private readonly sections: SectionsRouter,
     private readonly users: UsersRouter,
   ) {
-    const appRouter = createAppRouter(this.trpc, this.items, this.collections, this.users);
+    const appRouter = createAppRouter(
+      this.trpc,
+      this.items,
+      this.collections,
+      this.sections,
+      this.users,
+    );
     this.handler = createExpressMiddleware({
       router: appRouter,
       createContext: ({ req }) => ({

@@ -27,6 +27,7 @@ export type Item = Timestamp & {
   archivedAt: string | null;
   tags?: string[];
   collections?: ItemCollection[];
+  sectionId?: string | null;
 };
 
 export type CreateItemInput = {

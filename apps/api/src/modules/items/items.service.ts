@@ -105,15 +105,21 @@ export class ItemsService {
     const hasMore = items.length > limit;
     if (hasMore) items.pop();
 
-    const mapped = items.map(({ collections, ...item }) => ({
-      ...item,
-      collections: collections.map((ci) => ({
-        collectionId: ci.collectionId,
-        collectionName: ci.collection.name,
-        collectionColor: ci.collection.color,
-        collectionIcon: ci.collection.icon ?? null,
-      })),
-    }));
+    const mapped = items.map(({ collections, ...item }) => {
+      const currentCollection = collectionId
+        ? collections.find((ci) => ci.collectionId === collectionId)
+        : undefined;
+      return {
+        ...item,
+        collections: collections.map((ci) => ({
+          collectionId: ci.collectionId,
+          collectionName: ci.collection.name,
+          collectionColor: ci.collection.color,
+          collectionIcon: ci.collection.icon ?? null,
+        })),
+        ...(currentCollection !== undefined && { sectionId: currentCollection.sectionId }),
+      };
+    });
 
     return { items: mapped, nextCursor: hasMore ? (mapped[mapped.length - 1]?.id ?? null) : null };
   }

@@ -137,19 +137,37 @@ model Collection {
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   items       CollectionItem[]
+  sections    CollectionSection[]
 
   @@index([userId])
   @@index([shareToken])
   @@map("collections")
 }
 
+model CollectionSection {
+  id           String   @id @default(cuid())
+  collectionId String
+  name         String
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  collection   Collection       @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  items        CollectionItem[]
+
+  @@index([collectionId])
+  @@map("collection_sections")
+}
+
 model CollectionItem {
   collectionId String
   itemId       String
+  sectionId    String?
   addedAt      DateTime @default(now())
 
-  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  item         Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  collection   Collection         @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  item         Item               @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  section      CollectionSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
 
   @@id([collectionId, itemId])
   @@map("collection_items")

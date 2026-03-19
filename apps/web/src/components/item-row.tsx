@@ -11,12 +11,13 @@ import { getFaviconUrl, getHostname } from '@hako/utils';
 import {
   ArchiveBoxArrowDownIcon,
   ArchiveBoxIcon,
+  Bars2Icon,
   FolderPlusIcon,
   GlobeAltIcon,
   PencilSquareIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import { useRef, useState } from 'react';
+import { forwardRef, useCallback, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface HoverCardProps {
@@ -75,18 +76,27 @@ interface ItemRowProps {
   showCollection?: boolean;
   /** Show a subtle archive indicator when item.isArchived is true */
   showArchivedBadge?: boolean;
+  /** Section name to display as a badge (flat view mode) */
+  sectionName?: string | null | undefined;
   /** ID of whichever item is currently hovered in the list (managed by parent) */
   hoveredId: string | null;
   onHoverChange: (id: string | null) => void;
+  /** When provided, renders a drag handle button with these props (for DnD) */
+  dragHandleProps?: Record<string, unknown>;
 }
 
-export function ItemRow({
-  item,
-  showCollection = false,
-  showArchivedBadge = false,
-  hoveredId,
-  onHoverChange,
-}: ItemRowProps) {
+export const ItemRow = forwardRef<HTMLLIElement, ItemRowProps>(function ItemRow(
+  {
+    item,
+    showCollection = false,
+    showArchivedBadge = false,
+    sectionName,
+    hoveredId,
+    onHoverChange,
+    dragHandleProps,
+  }: ItemRowProps,
+  externalRef,
+) {
   const { archive, unarchive, deleteItem } = useItemActions();
   const { selectedItemId } = useKeyboardNav();
   const [faviconError, setFaviconError] = useState(false);
@@ -94,6 +104,17 @@ export function ItemRow({
   const [editOpen, setEditOpen] = useState(false);
   const [cardPos, setCardPos] = useState<{ top: number; left: number } | null>(null);
   const rowRef = useRef<HTMLLIElement>(null);
+
+  // Stable merged ref — avoids calling externalRef(null) on every re-render,
+  // which would cause dnd-kit to lose the node reference mid-drag.
+  const setRef = useCallback(
+    (node: HTMLLIElement | null) => {
+      rowRef.current = node;
+      if (typeof externalRef === 'function') externalRef(node);
+      else if (externalRef) externalRef.current = node;
+    },
+    [externalRef],
+  );
 
   const favicon = getFaviconUrl(item.url);
   const hostname = getHostname(item.url);
@@ -128,7 +149,7 @@ export function ItemRow({
 
   return (
     <li
-      ref={rowRef}
+      ref={setRef}
       data-item-id={item.id}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -165,6 +186,18 @@ export function ItemRow({
             isActive ? 'opacity-100' : 'opacity-0',
           ].join(' ')}
         >
+          {/* Drag handle — only rendered in section context */}
+          {dragHandleProps && (
+            <button
+              type="button"
+              title="Drag to reorder"
+              className="cursor-grab touch-none rounded p-1 text-stone-400 active:cursor-grabbing"
+              {...(dragHandleProps as Record<string, unknown>)}
+            >
+              <Bars2Icon className="size-3.5" />
+            </button>
+          )}
+
           {/* Archive / Unarchive */}
           {item.isArchived ? (
             <button
@@ -281,6 +314,13 @@ export function ItemRow({
           </span>
         )}
 
+        {/* Section badge — flat view mode only */}
+        {sectionName && (
+          <span className="ml-2 shrink-0 rounded-full bg-stone-100 px-2 py-0.5 text-[11px] font-medium text-stone-400 dark:bg-stone-800 dark:text-stone-500">
+            {sectionName}
+          </span>
+        )}
+
         {/* Collection badge(s) — All page only */}
         {showCollection &&
           firstCollection &&
@@ -386,4 +426,4 @@ export function ItemRow({
         )}
     </li>
   );
-}
+});

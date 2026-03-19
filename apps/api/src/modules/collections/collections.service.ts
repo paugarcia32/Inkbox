@@ -27,11 +27,18 @@ export class CollectionsService {
   async getById(userId: string, id: string) {
     const collection = await this.prisma.collection.findFirst({
       where: { id, userId },
-      include: { _count: { select: { items: true } } },
+      include: {
+        _count: { select: { items: true } },
+        sections: { orderBy: { order: 'asc' }, include: { _count: { select: { items: true } } } },
+      },
     });
     if (!collection) return null;
-    const { _count, ...rest } = collection;
-    return { ...rest, itemCount: _count.items };
+    const { _count, sections, ...rest } = collection;
+    return {
+      ...rest,
+      itemCount: _count.items,
+      sections: sections.map(({ _count: sc, ...s }) => ({ ...s, itemCount: sc.items })),
+    };
   }
 
   async create(

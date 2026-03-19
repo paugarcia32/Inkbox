@@ -1,4 +1,4 @@
-import type { Collection, Item, User } from '@prisma/client';
+import type { Collection, CollectionSection, Item, User } from '@prisma/client';
 import { prisma } from './prisma';
 
 let counter = 0;
@@ -51,6 +51,20 @@ export async function createTestCollection(
     data: {
       userId,
       name: `Collection ${uid()}`,
+      ...overrides,
+    },
+  });
+}
+
+export async function createTestSection(
+  collectionId: string,
+  overrides: Partial<{ name: string; order: number }> = {},
+): Promise<CollectionSection> {
+  return prisma.collectionSection.create({
+    data: {
+      collectionId,
+      name: `Section ${uid()}`,
+      order: 0,
       ...overrides,
     },
   });

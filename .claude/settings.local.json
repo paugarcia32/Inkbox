@@ -87,7 +87,17 @@
       "Bash(git stash:*)",
       "Bash(pnpm exec:*)",
       "Bash(ls /c/Users/Pau/dev/hako/apps/web/src/app/\\\\\\(app\\\\\\)/)",
-      "Bash(dotenv -e apps/api/.env.test -- npx vitest run --project api --reporter=verbose)"
+      "Bash(dotenv -e apps/api/.env.test -- npx vitest run --project api --reporter=verbose)",
+      "Bash(grep -l CollectionSection /c/Users/Pau/dev/hako/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/.prisma/client/*.d.ts)",
+      "Bash(pnpm --filter web biome check apps/web/src/components/sectioned-item-list.tsx)",
+      "Bash(grep -r \"transform\\\\|will-change\" /c/Users/Pau/dev/hako/apps/web/src/app --include=*.tsx --include=*.css)",
+      "Bash(find /c/Users/Pau/dev/hako -path *node_modules/@dnd-kit* -name *.js -o -path *node_modules/@dnd-kit* -name *.ts)",
+      "Bash(find /c/Users/Pau/dev/hako/node_modules/.pnpm/@dnd-kit+core* -name \"DragOverlay*\")",
+      "Bash(ls /c/Users/Pau/dev/hako/node_modules/.pnpm/@dnd-kit+core*/node_modules/@dnd-kit/core/dist/components/)",
+      "Bash(find /c/Users/Pau/dev/hako/node_modules/.pnpm/@dnd-kit+core@6.3.1* -name *.esm.js)",
+      "Bash(grep -r \"overflow\\\\|transform\\\\|will-change\" /c/Users/Pau/dev/hako/apps/web/src/app --include=*.tsx)",
+      "Bash(pnpm --filter web tsc --noEmit)",
+      "Bash(npx --no-install tsc --noEmit --project apps/web/tsconfig.json)"
     ]
   }
 }

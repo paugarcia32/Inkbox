@@ -1,11 +1,13 @@
 'use client';
 
 import { AddItemsToCollectionPopover } from '@/components/add-items-to-collection-popover';
+import { AddSectionButton } from '@/components/add-section-button';
 import { BottomUrlBar } from '@/components/bottom-url-bar';
-import { FilterBar } from '@/components/filter-bar';
+import { FilterBar, type ViewMode } from '@/components/filter-bar';
 import { ItemRow } from '@/components/item-row';
 import { ItemsSection } from '@/components/items-section';
 import { ScrollSentinel } from '@/components/scroll-sentinel';
+import { SectionedItemList } from '@/components/sectioned-item-list';
 import { useKeyboardNav } from '@/contexts/keyboard-nav';
 import { useInfiniteItems } from '@/hooks/use-infinite-items';
 import { useItemFiltering } from '@/hooks/use-item-filtering';
@@ -24,10 +26,12 @@ export default function CollectionDetailPage({
 }) {
   const { id } = use(params);
   const [showArchived, setShowArchived] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('sections');
   const [addPopoverOpen, setAddPopoverOpen] = useState(false);
   const addBtnRef = useRef<HTMLDivElement>(null);
 
   const { data: collection } = trpc.collections.getById.useQuery({ id });
+  const { data: sections = [] } = trpc.sections.list.useQuery({ collectionId: id });
 
   const { sort, setSort, typeFilter, setTypeFilter } = useItemFiltering();
 
@@ -68,6 +72,8 @@ export default function CollectionDetailPage({
     return () => setItems([]);
   }, [items, setItems]);
 
+  const hasSections = sections.length > 0;
+
   return (
     <>
       <div className="mx-auto max-w-3xl px-4 pt-4 pb-20">
@@ -103,24 +109,28 @@ export default function CollectionDetailPage({
               );
             })()}
 
-          {/* Add items button */}
-          <div ref={addBtnRef} className="relative ml-auto">
-            <button
-              type="button"
-              onClick={() => setAddPopoverOpen((v) => !v)}
-              className="flex items-center gap-1.5 rounded-lg border border-stone-200 px-3 py-1.5 text-xs font-medium text-stone-600 transition-colors hover:border-stone-300 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:bg-stone-800"
-            >
-              <PlusIcon className="size-3.5" />
-              Add items
-            </button>
+          {/* Add items + Add section buttons */}
+          <div className="ml-auto flex items-center gap-2">
+            <AddSectionButton collectionId={id} />
 
-            {addPopoverOpen && (
-              <AddItemsToCollectionPopover
-                collectionId={id}
-                existingItemIds={existingItemIds}
-                onClose={() => setAddPopoverOpen(false)}
-              />
-            )}
+            <div ref={addBtnRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setAddPopoverOpen((v) => !v)}
+                className="flex items-center gap-1.5 rounded-lg border border-stone-200 px-3 py-1.5 text-xs font-medium text-stone-600 transition-colors hover:border-stone-300 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:bg-stone-800"
+              >
+                <PlusIcon className="size-3.5" />
+                Add items
+              </button>
+
+              {addPopoverOpen && (
+                <AddItemsToCollectionPopover
+                  collectionId={id}
+                  existingItemIds={existingItemIds}
+                  onClose={() => setAddPopoverOpen(false)}
+                />
+              )}
+            </div>
           </div>
         </div>
 
@@ -129,6 +139,8 @@ export default function CollectionDetailPage({
           onSortChange={setSort}
           typeFilter={typeFilter}
           onTypeFilterChange={setTypeFilter}
+          viewMode={hasSections ? viewMode : undefined}
+          onViewModeChange={hasSections ? setViewMode : undefined}
           showArchived={showArchived}
           onToggleArchived={() => setShowArchived((v) => !v)}
         />
@@ -146,7 +158,7 @@ export default function CollectionDetailPage({
           </div>
         ) : (
           <ItemsSection isLoading={isLoading} isFetching={isFetching}>
-            {items.length === 0 && !isLoading ? (
+            {items.length === 0 && sections.length === 0 && !isLoading ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <InboxIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
                 <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
@@ -156,19 +168,41 @@ export default function CollectionDetailPage({
                   Use the "Add items" button above or the folder icon on any saved link
                 </p>
               </div>
+            ) : hasSections && viewMode === 'sections' ? (
+              <>
+                <SectionedItemList
+                  collectionId={id}
+                  sections={sections}
+                  items={items}
+                  hoveredId={hoveredId}
+                  onHoverChange={setHoveredId}
+                />
+                <ScrollSentinel
+                  onIntersect={fetchNextPage}
+                  isFetchingNextPage={isFetchingNextPage}
+                  hasNextPage={hasNextPage}
+                />
+              </>
             ) : (
               <>
                 <ul className="space-y-0.5">
-                  {items.map((item) => (
-                    <ItemRow
-                      key={item.id}
-                      item={item}
-                      showCollection={false}
-                      showArchivedBadge={showArchived}
-                      hoveredId={hoveredId}
-                      onHoverChange={setHoveredId}
-                    />
-                  ))}
+                  {items.map((item) => {
+                    const sectionName =
+                      hasSections && item.sectionId
+                        ? sections.find((s) => s.id === item.sectionId)?.name
+                        : undefined;
+                    return (
+                      <ItemRow
+                        key={item.id}
+                        item={item}
+                        showCollection={false}
+                        showArchivedBadge={showArchived}
+                        sectionName={sectionName}
+                        hoveredId={hoveredId}
+                        onHoverChange={setHoveredId}
+                      />
+                    );
+                  })}
                 </ul>
                 <ScrollSentinel
                   onIntersect={fetchNextPage}
