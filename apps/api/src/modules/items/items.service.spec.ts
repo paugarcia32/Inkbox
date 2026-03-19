@@ -217,6 +217,103 @@ describe('ItemsService', () => {
         expect(page1Ids.has(item.id)).toBe(false);
       }
     });
+
+    it('filters items by type when type is provided', async () => {
+      const user = await createTestUser();
+      await createTestItem(user.id, { type: 'link', status: 'done' });
+      await createTestItem(user.id, { type: 'video', status: 'done' });
+
+      const result = await service.findAll(user.id, { limit: 10, type: 'video' });
+
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]?.type).toBe('video');
+    });
+
+    it('returns all types when type is not provided', async () => {
+      const user = await createTestUser();
+      await createTestItem(user.id, { type: 'link', status: 'done' });
+      await createTestItem(user.id, { type: 'video', status: 'done' });
+
+      const result = await service.findAll(user.id, { limit: 10 });
+
+      expect(result.items).toHaveLength(2);
+    });
+
+    it('returns items in ascending order when sortDir is asc', async () => {
+      const user = await createTestUser();
+      const first = await createTestItem(user.id);
+      await new Promise((r) => setTimeout(r, 10));
+      const second = await createTestItem(user.id);
+
+      const result = await service.findAll(user.id, { limit: 10, sortDir: 'asc' });
+
+      expect(result.items[0]?.id).toBe(first.id);
+      expect(result.items[1]?.id).toBe(second.id);
+    });
+
+    it('returns items in descending order when sortDir is desc', async () => {
+      const user = await createTestUser();
+      const first = await createTestItem(user.id);
+      await new Promise((r) => setTimeout(r, 10));
+      const second = await createTestItem(user.id);
+
+      const result = await service.findAll(user.id, { limit: 10, sortDir: 'desc' });
+
+      expect(result.items[0]?.id).toBe(second.id);
+      expect(result.items[1]?.id).toBe(first.id);
+    });
+
+    it('cursor pagination works correctly with sortDir asc', async () => {
+      const user = await createTestUser();
+      for (let i = 0; i < 5; i++) {
+        await createTestItem(user.id);
+        await new Promise((r) => setTimeout(r, 5));
+      }
+
+      const page1 = await service.findAll(user.id, { limit: 3, sortDir: 'asc' });
+      expect(page1.nextCursor).not.toBeNull();
+
+      const page2 = await service.findAll(user.id, {
+        limit: 3,
+        sortDir: 'asc',
+        // biome-ignore lint/style/noNonNullAssertion: nextCursor presence is asserted on the line above
+        cursor: page1.nextCursor!,
+      });
+
+      const page1Ids = new Set(page1.items.map((i) => i.id));
+      for (const item of page2.items) {
+        expect(page1Ids.has(item.id)).toBe(false);
+      }
+      // page1 items are older (asc), page2 items are newer
+      const lastPage1 = page1.items[page1.items.length - 1];
+      const firstPage2 = page2.items[0];
+      // biome-ignore lint/style/noNonNullAssertion: items presence is guaranteed by the 5-item setup above
+      expect(new Date(firstPage2!.createdAt).getTime()).toBeGreaterThan(
+        // biome-ignore lint/style/noNonNullAssertion: items presence is guaranteed by the 5-item setup above
+        new Date(lastPage1!.createdAt).getTime(),
+      );
+    });
+
+    it('type filter combines with inboxOnly', async () => {
+      const user = await createTestUser();
+      const collection = await createTestCollection(user.id);
+
+      const inboxVideo = await createTestItem(user.id, { type: 'video', status: 'done' });
+      // archived video — should not appear
+      await createTestItem(user.id, { type: 'video', status: 'done', isArchived: true });
+      // inbox link — wrong type
+      await createTestItem(user.id, { type: 'link', status: 'done' });
+      // video in collection — not inbox
+      const collectionVideo = await createTestItem(user.id, { type: 'video', status: 'done' });
+      await prisma.collectionItem.create({
+        data: { itemId: collectionVideo.id, collectionId: collection.id },
+      });
+
+      const result = await service.findAll(user.id, { limit: 10, inboxOnly: true, type: 'video' });
+
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]?.id).toBe(inboxVideo.id);
+    });
   });
 
   describe('findOne', () => {

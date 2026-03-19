@@ -21,6 +21,8 @@ export class ItemsRouter {
             archivedOnly: z.boolean().optional(),
             includeArchived: z.boolean().optional(),
             collectionId: z.string().optional(),
+            type: z.enum(['link', 'article', 'video', 'image', 'post', 'document']).optional(),
+            sortDir: z.enum(['asc', 'desc']).optional(),
           }),
         )
         .query(({ ctx, input }) => this.items.findAll(ctx.userId, input)),

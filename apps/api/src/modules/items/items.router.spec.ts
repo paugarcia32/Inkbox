@@ -179,6 +179,47 @@ describe('items tRPC router', () => {
       expect(result.items[0]?.isArchived).toBe(true);
     });
 
+    it('filters items by type', async () => {
+      const user = await createTestUser();
+      await createTestItem(user.id, { type: 'link', status: 'done' });
+      await createTestItem(user.id, { type: 'video', status: 'done' });
+      const caller = await getCaller(user.id);
+
+      const result = await caller.items.list({ type: 'video' });
+
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]?.type).toBe('video');
+    });
+
+    it('Zod rejects invalid type value', async () => {
+      const user = await createTestUser();
+      const caller = await getCaller(user.id);
+
+      // @ts-expect-error — intentionally passing invalid input
+      await expect(caller.items.list({ type: 'podcast' })).rejects.toThrow();
+    });
+
+    it('returns items in ascending order with sortDir asc', async () => {
+      const user = await createTestUser();
+      const first = await createTestItem(user.id);
+      await new Promise((r) => setTimeout(r, 10));
+      const second = await createTestItem(user.id);
+      const caller = await getCaller(user.id);
+
+      const result = await caller.items.list({ sortDir: 'asc' });
+
+      expect(result.items[0]?.id).toBe(first.id);
+      expect(result.items[1]?.id).toBe(second.id);
+    });
+
+    it('Zod rejects invalid sortDir value', async () => {
+      const user = await createTestUser();
+      const caller = await getCaller(user.id);
+
+      // @ts-expect-error — intentionally passing invalid input
+      await expect(caller.items.list({ sortDir: 'random' })).rejects.toThrow();
+    });
+
     it('filters items by collectionId', async () => {
       const user = await createTestUser();
       const col1 = await createTestCollection(user.id);

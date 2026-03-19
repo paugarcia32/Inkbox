@@ -14,6 +14,10 @@ type FindAllOptions = {
   includeArchived?: boolean | undefined;
   /** Collection detail page: filter by collection */
   collectionId?: string | undefined;
+  /** Filter by content type */
+  type?: 'link' | 'article' | 'video' | 'image' | 'post' | 'document' | undefined;
+  /** Sort direction for createdAt (default: desc) */
+  sortDir?: 'asc' | 'desc' | undefined;
 };
 
 @Injectable()
@@ -65,7 +69,16 @@ export class ItemsService {
 
   async findAll(
     userId: string,
-    { limit, cursor, inboxOnly, archivedOnly, includeArchived, collectionId }: FindAllOptions,
+    {
+      limit,
+      cursor,
+      inboxOnly,
+      archivedOnly,
+      includeArchived,
+      collectionId,
+      type,
+      sortDir,
+    }: FindAllOptions,
   ) {
     const where = {
       userId,
@@ -77,6 +90,8 @@ export class ItemsService {
       ...(archivedOnly ? { isArchived: true } : {}),
       // Default: hide archived unless explicitly requested (applies to All page AND collection pages)
       ...(!inboxOnly && !archivedOnly && !includeArchived ? { isArchived: false } : {}),
+      // Content type filter
+      ...(type ? { type } : {}),
     };
 
     const items = await this.prisma.item.findMany({
@@ -84,7 +99,7 @@ export class ItemsService {
       include: { collections: { include: { collection: true } } },
       take: limit + 1,
       ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: sortDir === 'asc' ? 'asc' : 'desc' },
     });
 
     const hasMore = items.length > limit;

@@ -86,7 +86,8 @@
       "Bash(npx biome:*)",
       "Bash(git stash:*)",
       "Bash(pnpm exec:*)",
-      "Bash(ls /c/Users/Pau/dev/hako/apps/web/src/app/\\\\\\(app\\\\\\)/)"
+      "Bash(ls /c/Users/Pau/dev/hako/apps/web/src/app/\\\\\\(app\\\\\\)/)",
+      "Bash(dotenv -e apps/api/.env.test -- npx vitest run --project api --reporter=verbose)"
     ]
   }
 }

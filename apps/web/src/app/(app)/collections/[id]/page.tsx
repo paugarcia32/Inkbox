@@ -5,13 +5,17 @@ import { BottomUrlBar } from '@/components/bottom-url-bar';
 import { FilterBar } from '@/components/filter-bar';
 import { ItemRow } from '@/components/item-row';
 import { ItemsSection } from '@/components/items-section';
+import { ScrollSentinel } from '@/components/scroll-sentinel';
+import { useKeyboardNav } from '@/contexts/keyboard-nav';
+import { useInfiniteItems } from '@/hooks/use-infinite-items';
 import { useItemFiltering } from '@/hooks/use-item-filtering';
 import { getCollectionIcon } from '@/lib/collection-icons';
 import { trpc } from '@/lib/trpc';
 import { COLLECTION_COLORS } from '@hako/types';
+import type { Item } from '@hako/types';
 import { ArrowLeftIcon, InboxIcon, PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { use, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 
 export default function CollectionDetailPage({
   params,
@@ -24,33 +28,45 @@ export default function CollectionDetailPage({
   const addBtnRef = useRef<HTMLDivElement>(null);
 
   const { data: collection } = trpc.collections.getById.useQuery({ id });
-  const { data, isLoading, isFetching, isError, refetch } = trpc.items.list.useQuery(
-    { collectionId: id, includeArchived: showArchived || undefined },
-    {
-      placeholderData: (prev) => prev,
-      refetchInterval: (query) =>
-        query.state.data?.items.some(
-          (item) => item.status === 'pending' || item.status === 'processing',
-        )
-          ? 2000
-          : false,
+
+  const { sort, setSort, typeFilter, setTypeFilter } = useItemFiltering();
+
+  const {
+    items,
+    isLoading,
+    isFetching,
+    isError,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    refetch,
+  } = useInfiniteItems({
+    collectionId: id,
+    includeArchived: showArchived || undefined,
+    typeFilter,
+    sort,
+    placeholderData: true,
+    refetchInterval: (query: { state: { data: { pages: { items: Item[] }[] } | undefined } }) => {
+      const allItems = query.state.data?.pages.flatMap((p) => p.items) ?? [];
+      return allItems.some((item) => item.status === 'pending' || item.status === 'processing')
+        ? 2000
+        : false;
     },
-  );
+  });
+
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const { setItems } = useKeyboardNav();
 
   const colorHex = collection
     ? (COLLECTION_COLORS.find((c) => c.id === collection.color)?.hex ?? '#78716c')
     : '#78716c';
 
-  const existingItemIds = new Set(data?.items.map((i) => i.id) ?? []);
+  const existingItemIds = new Set(items.map((i) => i.id));
 
-  const {
-    sort,
-    setSort,
-    typeFilter,
-    setTypeFilter,
-    filtered: items,
-  } = useItemFiltering(data?.items ?? []);
+  useEffect(() => {
+    setItems(items);
+    return () => setItems([]);
+  }, [items, setItems]);
 
   return (
     <>
@@ -130,7 +146,7 @@ export default function CollectionDetailPage({
           </div>
         ) : (
           <ItemsSection isLoading={isLoading} isFetching={isFetching}>
-            {items.length === 0 ? (
+            {items.length === 0 && !isLoading ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <InboxIcon className="mb-3 size-9 text-stone-300 dark:text-stone-600" />
                 <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
@@ -141,18 +157,25 @@ export default function CollectionDetailPage({
                 </p>
               </div>
             ) : (
-              <ul className="space-y-0.5">
-                {items.map((item) => (
-                  <ItemRow
-                    key={item.id}
-                    item={item}
-                    showCollection={false}
-                    showArchivedBadge={showArchived}
-                    hoveredId={hoveredId}
-                    onHoverChange={setHoveredId}
-                  />
-                ))}
-              </ul>
+              <>
+                <ul className="space-y-0.5">
+                  {items.map((item) => (
+                    <ItemRow
+                      key={item.id}
+                      item={item}
+                      showCollection={false}
+                      showArchivedBadge={showArchived}
+                      hoveredId={hoveredId}
+                      onHoverChange={setHoveredId}
+                    />
+                  ))}
+                </ul>
+                <ScrollSentinel
+                  onIntersect={fetchNextPage}
+                  isFetchingNextPage={isFetchingNextPage}
+                  hasNextPage={hasNextPage}
+                />
+              </>
             )}
           </ItemsSection>
         )}
