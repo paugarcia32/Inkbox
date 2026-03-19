@@ -59,6 +59,10 @@ export class ItemsRouter {
         .input(z.object({ id: z.string() }))
         .mutation(({ ctx, input }) => this.items.delete(ctx.userId, input.id)),
 
+      search: this.trpc.protectedProcedure
+        .input(z.object({ query: z.string().min(1).max(100) }))
+        .query(({ ctx, input }) => this.items.search(ctx.userId, input.query)),
+
       count: this.trpc.protectedProcedure.query(({ ctx }) => this.items.countInbox(ctx.userId)),
     });
   }

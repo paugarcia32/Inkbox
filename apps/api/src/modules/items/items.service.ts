@@ -145,6 +145,34 @@ export class ItemsService {
     return this.prisma.item.delete({ where: { id, userId } });
   }
 
+  async search(userId: string, query: string) {
+    const q = query.trim();
+    const items = await this.prisma.item.findMany({
+      where: {
+        userId,
+        OR: [
+          { title: { contains: q, mode: 'insensitive' } },
+          { url: { contains: q, mode: 'insensitive' } },
+          { description: { contains: q, mode: 'insensitive' } },
+          { siteName: { contains: q, mode: 'insensitive' } },
+        ],
+      },
+      include: { collections: { include: { collection: true } } },
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return items.map(({ collections, ...item }) => ({
+      ...item,
+      collections: collections.map((ci) => ({
+        collectionId: ci.collectionId,
+        collectionName: ci.collection.name,
+        collectionColor: ci.collection.color,
+        collectionIcon: ci.collection.icon ?? null,
+      })),
+    }));
+  }
+
   async countInbox(userId: string) {
     const count = await this.prisma.item.count({
       where: { userId, isArchived: false, collections: { none: {} } },

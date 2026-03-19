@@ -108,6 +108,20 @@ export class CollectionsService {
     });
   }
 
+  async search(userId: string, query: string) {
+    const q = query.trim();
+    const collections = await this.prisma.collection.findMany({
+      where: {
+        userId,
+        name: { contains: q, mode: 'insensitive' },
+      },
+      include: { _count: { select: { items: true } } },
+      take: 3,
+      orderBy: { createdAt: 'desc' },
+    });
+    return collections.map(({ _count, ...c }) => ({ ...c, itemCount: _count.items }));
+  }
+
   async findByShareToken(token: string) {
     return this.prisma.collection.findUnique({
       where: { shareToken: token, isPublic: true },

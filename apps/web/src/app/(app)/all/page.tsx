@@ -143,7 +143,7 @@ export default function AllPage() {
       </div>
 
       <ItemDetailPanel item={selectedItem} onClose={() => setSelectedItem(null)} />
-      <BottomUrlBar />
+      <BottomUrlBar onSelectItem={setSelectedItem} />
     </>
   );
 }

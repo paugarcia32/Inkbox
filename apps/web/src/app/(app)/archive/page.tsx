@@ -78,7 +78,7 @@ export default function ArchivePage() {
       </div>
 
       <ItemDetailPanel item={selectedItem} onClose={() => setSelectedItem(null)} />
-      <BottomUrlBar inboxOnlyMessage />
+      <BottomUrlBar inboxOnlyMessage onSelectItem={setSelectedItem} />
     </>
   );
 }

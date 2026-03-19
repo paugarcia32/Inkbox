@@ -163,7 +163,11 @@ export default function CollectionDetailPage({
       </div>
 
       <ItemDetailPanel item={selectedItem} onClose={() => setSelectedItem(null)} />
-      <BottomUrlBar collectionId={id} collectionName={collection?.name} />
+      <BottomUrlBar
+        collectionId={id}
+        collectionName={collection?.name}
+        onSelectItem={setSelectedItem}
+      />
     </>
   );
 }

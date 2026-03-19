@@ -71,6 +71,10 @@ export class CollectionsRouter {
           this.collections.removeItem(ctx.userId, input.collectionId, input.itemId),
         ),
 
+      search: this.trpc.protectedProcedure
+        .input(z.object({ query: z.string().min(1).max(100) }))
+        .query(({ ctx, input }) => this.collections.search(ctx.userId, input.query)),
+
       byShareToken: this.trpc.publicProcedure
         .input(z.object({ token: z.string() }))
         .query(({ input }) => this.collections.findByShareToken(input.token)),

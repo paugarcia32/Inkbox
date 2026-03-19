@@ -200,7 +200,7 @@ export class TwitterScraperService implements IScraper {
             .replace(/[""\u201D]\s*$/, '')
             .trim() ?? null;
 
-        const contentType = isArticle ? ('article' as const) : ('tweet' as const);
+        const contentType = isArticle ? ('article' as const) : ('post' as const);
         this.logger.log(
           `Twitter HTML phase: og:type=${ogType ?? 'n/a'} → contentType=${contentType}`,
         );
