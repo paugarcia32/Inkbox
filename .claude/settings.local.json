@@ -113,7 +113,8 @@
       "Bash(node -e \":*)",
       "Bash(pnpm --filter @hako/api prisma migrate status)",
       "Bash(pnpm --filter @hako/api test)",
-      "Bash(pnpm --filter web typecheck)"
+      "Bash(pnpm --filter web typecheck)",
+      "Bash(grep -v \"^$\")"
     ]
   }
 }

@@ -12,11 +12,17 @@ import type { Item } from '@hako/types';
 import { InboxArrowDownIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
 
+const MAX_POLL_ATTEMPTS = 15; // ~2 min max (2s+4s+8s+16s+30s×10)
+
+const isPending = (item: Item) => item.status === 'pending' || item.status === 'processing';
+
 export default function InboxPage() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const { setItems, pendingFilterOpen, setPendingFilterOpen } = useKeyboardNav();
 
   const { sort, setSort, typeFilter, setTypeFilter } = useItemFiltering();
+
+  const [pollAttempts, setPollAttempts] = useState(0);
 
   const { items, isLoading, isError, hasNextPage, isFetchingNextPage, fetchNextPage, refetch } =
     useInfiniteItems({
@@ -25,9 +31,8 @@ export default function InboxPage() {
       sort,
       refetchInterval: (query: { state: { data: { pages: { items: Item[] }[] } | undefined } }) => {
         const allItems = query.state.data?.pages.flatMap((p) => p.items) ?? [];
-        return allItems.some((item) => item.status === 'pending' || item.status === 'processing')
-          ? 2000
-          : false;
+        if (!allItems.some(isPending) || pollAttempts >= MAX_POLL_ATTEMPTS) return false;
+        return Math.min(2000 * 2 ** pollAttempts, 30_000);
       },
     });
 
@@ -35,6 +40,14 @@ export default function InboxPage() {
     setItems(items);
     return () => setItems([]);
   }, [items, setItems]);
+
+  useEffect(() => {
+    if (items.some(isPending)) {
+      setPollAttempts((prev) => Math.min(prev + 1, MAX_POLL_ATTEMPTS));
+    } else {
+      setPollAttempts(0);
+    }
+  }, [items]);
 
   return (
     <>
