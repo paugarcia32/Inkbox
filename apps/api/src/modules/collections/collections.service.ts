@@ -129,10 +129,29 @@ export class CollectionsService {
     return collections.map(({ _count, ...c }) => ({ ...c, itemCount: _count.items }));
   }
 
-  async findByShareToken(token: string) {
-    return this.prisma.collection.findUnique({
+  async findByShareToken(
+    token: string,
+    { limit, cursor }: { limit: number; cursor?: string | undefined },
+  ) {
+    const collection = await this.prisma.collection.findUnique({
       where: { shareToken: token, isPublic: true },
-      include: { items: { include: { item: true } } },
     });
+    if (!collection) return null;
+
+    const items = await this.prisma.item.findMany({
+      where: { collections: { some: { collectionId: collection.id } } },
+      take: limit + 1,
+      ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const hasMore = items.length > limit;
+    if (hasMore) items.pop();
+
+    return {
+      collection,
+      items,
+      nextCursor: hasMore ? (items[items.length - 1]?.id ?? null) : null,
+    };
   }
 }

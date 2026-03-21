@@ -76,8 +76,19 @@ export class CollectionsRouter {
         .query(({ ctx, input }) => this.collections.search(ctx.userId, input.query)),
 
       byShareToken: this.trpc.publicProcedure
-        .input(z.object({ token: z.string() }))
-        .query(({ input }) => this.collections.findByShareToken(input.token)),
+        .input(
+          z.object({
+            token: z.string(),
+            limit: z.number().min(1).max(100).default(50),
+            cursor: z.string().optional(),
+          }),
+        )
+        .query(({ input }) =>
+          this.collections.findByShareToken(input.token, {
+            limit: input.limit,
+            cursor: input.cursor,
+          }),
+        ),
     });
   }
 }

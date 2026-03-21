@@ -106,7 +106,9 @@
       "Bash(dir /b *.json)",
       "Bash(dir /b appsapi*.json)",
       "Bash(ls *.json)",
-      "Bash(ls apps/api/*.json)"
+      "Bash(ls apps/api/*.json)",
+      "Bash(git checkout:*)",
+      "Bash(pnpm format:*)"
     ]
   }
 }

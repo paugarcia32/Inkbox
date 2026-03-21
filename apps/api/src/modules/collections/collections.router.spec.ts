@@ -184,8 +184,9 @@ describe('collections tRPC router', () => {
       const result = await caller.collections.byShareToken({ token: 'public-token-abc' });
 
       expect(result).not.toBeNull();
-      expect(result?.id).toBe(col.id);
+      expect(result?.collection.id).toBe(col.id);
       expect(result?.items).toHaveLength(1);
+      expect(result?.nextCursor).toBeNull();
     });
 
     it('can be called without any userId in context', async () => {

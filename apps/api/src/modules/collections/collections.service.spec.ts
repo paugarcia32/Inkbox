@@ -137,7 +137,7 @@ describe('CollectionsService', () => {
 
   describe('findByShareToken', () => {
     it('returns null for a non-existent token', async () => {
-      const result = await service.findByShareToken('non-existent-token');
+      const result = await service.findByShareToken('non-existent-token', { limit: 50 });
       expect(result).toBeNull();
     });
 
@@ -149,11 +149,11 @@ describe('CollectionsService', () => {
       });
 
       // biome-ignore lint/style/noNonNullAssertion: shareToken is set explicitly in test factory
-      const result = await service.findByShareToken(col.shareToken!);
+      const result = await service.findByShareToken(col.shareToken!, { limit: 50 });
       expect(result).toBeNull();
     });
 
-    it('returns collection with nested items when isPublic is true', async () => {
+    it('returns collection with items when isPublic is true', async () => {
       const user = await createTestUser();
       const col = await createTestCollection(user.id, {
         isPublic: true,
@@ -164,12 +164,13 @@ describe('CollectionsService', () => {
         data: { collectionId: col.id, itemId: item.id },
       });
 
-      const result = await service.findByShareToken('public-share-token');
+      const result = await service.findByShareToken('public-share-token', { limit: 50 });
 
       expect(result).not.toBeNull();
-      expect(result?.id).toBe(col.id);
+      expect(result?.collection.id).toBe(col.id);
       expect(result?.items).toHaveLength(1);
-      expect(result?.items[0]?.item.id).toBe(item.id);
+      expect(result?.items[0]?.id).toBe(item.id);
+      expect(result?.nextCursor).toBeNull();
     });
   });
 });
