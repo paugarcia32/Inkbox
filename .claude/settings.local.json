@@ -115,7 +115,9 @@
       "Bash(pnpm --filter @hako/api test)",
       "Bash(pnpm --filter web typecheck)",
       "Bash(grep -v \"^$\")",
-      "Bash(pnpm remove:*)"
+      "Bash(pnpm remove:*)",
+      "Bash(git -C C:/Users/Pau/dev/hako diff --name-only)",
+      "Bash(pnpm --filter @hako/api test -- src/trpc/trpc.service.spec.ts)"
     ]
   }
 }
