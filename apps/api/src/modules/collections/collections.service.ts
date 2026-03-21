@@ -101,6 +101,9 @@ export class CollectionsService {
     await this.prisma.collection.findFirstOrThrow({
       where: { id: collectionId, userId },
     });
+    await this.prisma.item.findFirstOrThrow({
+      where: { id: itemId, userId },
+    });
     return this.prisma.collectionItem.create({
       data: { collectionId, itemId },
     });
@@ -109,6 +112,9 @@ export class CollectionsService {
   async removeItem(userId: string, collectionId: string, itemId: string) {
     await this.prisma.collection.findFirstOrThrow({
       where: { id: collectionId, userId },
+    });
+    await this.prisma.item.findFirstOrThrow({
+      where: { id: itemId, userId },
     });
     return this.prisma.collectionItem.delete({
       where: { collectionId_itemId: { collectionId, itemId } },

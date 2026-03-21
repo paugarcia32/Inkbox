@@ -117,7 +117,8 @@
       "Bash(grep -v \"^$\")",
       "Bash(pnpm remove:*)",
       "Bash(git -C C:/Users/Pau/dev/hako diff --name-only)",
-      "Bash(pnpm --filter @hako/api test -- src/trpc/trpc.service.spec.ts)"
+      "Bash(pnpm --filter @hako/api test -- src/trpc/trpc.service.spec.ts)",
+      "Bash(pnpm --filter @hako/api test -- src/modules/collections/collections.service.spec.ts src/modules/sections/sections.service.spec.ts)"
     ]
   }
 }

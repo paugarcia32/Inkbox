@@ -67,6 +67,9 @@ export class SectionsService {
 
   async assignItem(userId: string, collectionId: string, itemId: string, sectionId: string | null) {
     await this.assertCollectionOwner(userId, collectionId);
+    await this.prisma.item.findFirstOrThrow({
+      where: { id: itemId, userId },
+    });
     if (sectionId !== null) {
       // verify section belongs to the same collection
       await this.prisma.collectionSection.findFirstOrThrow({

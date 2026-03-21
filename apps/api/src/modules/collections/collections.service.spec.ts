@@ -133,6 +133,15 @@ describe('CollectionsService', () => {
 
       await expect(service.addItem(user.id, col.id, 'non-existent-item-id')).rejects.toThrow();
     });
+
+    it('throws when the item belongs to a different user', async () => {
+      const user1 = await createTestUser();
+      const user2 = await createTestUser();
+      const col = await createTestCollection(user1.id);
+      const item = await createTestItem(user2.id);
+
+      await expect(service.addItem(user1.id, col.id, item.id)).rejects.toThrow();
+    });
   });
 
   describe('findByShareToken', () => {
