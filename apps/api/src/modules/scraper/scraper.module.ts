@@ -5,6 +5,7 @@ import { ScraperService } from './scraper.service';
 import { DribbbleScraperService } from './strategies/dribbble.scraper';
 import { GenericScraperService } from './strategies/generic.scraper';
 import { PinterestScraperService } from './strategies/pinterest.scraper';
+import { TikTokScraperService } from './strategies/tiktok.scraper';
 import { TwitterScraperService } from './strategies/twitter.scraper';
 import { YoutubeScraperService } from './strategies/youtube.scraper';
 
@@ -15,6 +16,7 @@ import { YoutubeScraperService } from './strategies/youtube.scraper';
     PinterestScraperService,
     YoutubeScraperService,
     DribbbleScraperService,
+    TikTokScraperService,
     GenericScraperService,
     {
       provide: SCRAPER_STRATEGIES,
@@ -24,13 +26,15 @@ import { YoutubeScraperService } from './strategies/youtube.scraper';
         pinterest: PinterestScraperService,
         youtube: YoutubeScraperService,
         dribbble: DribbbleScraperService,
+        tiktok: TikTokScraperService,
         generic: GenericScraperService,
-      ) => [twitter, pinterest, youtube, dribbble, generic],
+      ) => [twitter, pinterest, youtube, dribbble, tiktok, generic],
       inject: [
         TwitterScraperService,
         PinterestScraperService,
         YoutubeScraperService,
         DribbbleScraperService,
+        TikTokScraperService,
         GenericScraperService,
       ],
     },
