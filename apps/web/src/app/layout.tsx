@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 const ThemeScript = ({ nonce }: { nonce: string }) => (
   <script
     nonce={nonce}
+    suppressHydrationWarning
     // biome-ignore lint/security/noDangerouslySetInnerHtml: static theme init script
     dangerouslySetInnerHTML={{
       __html: `(function(){try{var s=localStorage.getItem('theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||(!s&&d)){document.documentElement.classList.add('dark')}}catch(e){}})()`,
