@@ -120,7 +120,9 @@
       "Bash(pnpm --filter @hako/api test -- src/trpc/trpc.service.spec.ts)",
       "Bash(pnpm --filter @hako/api test -- src/modules/collections/collections.service.spec.ts src/modules/sections/sections.service.spec.ts)",
       "Bash(pnpm --filter @hako/api test -- src/modules/items/items.service.spec.ts src/modules/items/items.router.spec.ts)",
-      "Bash(pnpm --filter @hako/api test -- tiktok)"
+      "Bash(pnpm --filter @hako/api test -- tiktok)",
+      "WebFetch(domain:developers.facebook.com)",
+      "Bash(pnpm --filter @hako/api test -- instagram)"
     ]
   }
 }
