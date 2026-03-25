@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '@hako/db';
 import type { ScraperService } from './services/scraper.service';
 
 export type AppRequest = {

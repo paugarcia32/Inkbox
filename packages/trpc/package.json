@@ -15,8 +15,8 @@
     "test:coverage": "dotenv -e ../../apps/api/.env.test -- vitest run --coverage"
   },
   "dependencies": {
+    "@hako/db": "workspace:*",
     "@hako/types": "workspace:*",
-    "@prisma/client": "^5.0.0",
     "@trpc/server": "^11.0.0",
     "rate-limiter-flexible": "^5.0.0",
     "zod": "^3.23.0"

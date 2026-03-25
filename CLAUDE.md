@@ -47,14 +47,15 @@ pnpm format           # biome format --write . (auto-fix formatting)
 ### Database
 
 ```bash
-# From apps/api/
-pnpm db:migrate       # prisma migrate dev (creates migration + applies)
-pnpm db:push          # prisma db push (no migration file, dev only)
-pnpm db:studio        # Prisma Studio UI
-pnpm db:migrate:test  # Apply schema to test DB (uses .env.test)
+# From packages/db/ (or delegate via apps/api/ — both work)
+pnpm --filter @hako/db db:migrate       # prisma migrate dev (creates migration + applies)
+pnpm --filter @hako/db db:push          # prisma db push (no migration file, dev only)
+pnpm --filter @hako/db db:studio        # Prisma Studio UI
+pnpm --filter @hako/db db:migrate:test  # Apply schema to test DB (uses .env.test)
+pnpm --filter @hako/db generate         # Regenerate Prisma client after schema changes
 ```
 
-Requires `.env` in `apps/api/` — copy from `.env.example`. Test DB requires `.env.test`.
+Schema and migrations live in `packages/db/prisma/`. Requires `.env` in `apps/api/` — copy from `.env.example`. Test DB requires `.env.test`.
 
 ---
 
@@ -62,7 +63,8 @@ Requires `.env` in `apps/api/` — copy from `.env.example`. Test DB requires `.
 
 Full reference: [`docs/architecture.md`](docs/architecture.md)
 
-**Monorepo**: pnpm workspaces + Turborepo. Four shared packages:
+**Monorepo**: pnpm workspaces + Turborepo. Five shared packages:
+- `@hako/db` — Prisma schema, migrations, and generated client (single source of truth for DB)
 - `@hako/trpc` — all business logic: tRPC routers, services, scraper strategies (framework-agnostic TypeScript)
 - `@hako/types` — shared TypeScript types (imported by both apps)
 - `@hako/utils` — shared utility functions

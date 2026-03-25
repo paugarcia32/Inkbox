@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '@hako/db';
 
 export async function truncateAll(prisma: PrismaClient) {
   await prisma.$executeRawUnsafe(`

@@ -8,6 +8,7 @@ hako/
 │   ├── api/          # NestJS HTTP adapter (@hako/api)
 │   └── web/          # Next.js 15 frontend (@hako/web)
 ├── packages/
+│   ├── db/           # Prisma schema, migrations, generated client (@hako/db)
 │   ├── trpc/         # Business logic + tRPC routers (@hako/trpc)
 │   ├── types/        # Shared TypeScript types (@hako/types)
 │   ├── utils/        # Shared utilities (@hako/utils)
@@ -19,6 +20,39 @@ hako/
 ```
 
 Managed with **pnpm workspaces** + **Turborepo**. Run all apps with `pnpm dev` from root.
+
+---
+
+## `packages/db` — database
+
+The canonical owner of the Prisma schema and all migrations. Exports `PrismaClient` and all model types so every consumer imports from `@hako/db` rather than `@prisma/client` directly.
+
+```
+packages/db/
+├── prisma/
+│   ├── schema.prisma       # Single source of truth for the DB schema
+│   └── migrations/         # All migration files
+├── generated/
+│   └── prisma/             # Generated Prisma client (gitignored, built by prisma generate)
+└── src/
+    └── index.ts            # export * from '../generated/prisma'
+```
+
+**Why a separate package?**
+
+- `apps/api` and any future `apps/workers` both need direct DB access — a single package avoids duplicating the schema.
+- Mobile app and browser extension never touch Prisma directly — they call the API over HTTP.
+- All Prisma version and schema changes happen in one place.
+
+**Commands** (run from workspace root):
+
+```bash
+pnpm --filter @hako/db generate         # Regenerate client after schema changes
+pnpm --filter @hako/db db:migrate       # prisma migrate dev
+pnpm --filter @hako/db db:push          # prisma db push (dev only)
+pnpm --filter @hako/db db:studio        # Prisma Studio
+pnpm --filter @hako/db db:migrate:test  # Apply schema to test DB
+```
 
 ---
 
@@ -107,7 +141,7 @@ src/
 
 ### Database
 
-See `apps/api/prisma/schema.prisma` for the full schema. Key relations:
+See `packages/db/prisma/schema.prisma` for the full schema. Key relations:
 - `Item` → `CollectionItem[]` → `Collection` (many-to-many with optional `CollectionSection`)
 - All user data cascades on user delete
 

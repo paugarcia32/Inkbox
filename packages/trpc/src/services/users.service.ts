@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '@hako/db';
 
 export class UsersService {
   constructor(private readonly prisma: PrismaClient) {}

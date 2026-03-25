@@ -1,4 +1,4 @@
-import type { Collection, CollectionSection, Item, User } from '@prisma/client';
+import type { Collection, CollectionSection, Item, User } from '@hako/db';
 import { prisma } from './prisma';
 
 let counter = 0;

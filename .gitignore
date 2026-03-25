@@ -2,6 +2,7 @@ node_modules
 .next
 dist
 .turbo
+packages/db/generated
 .env
 .env.local
 *.env.local

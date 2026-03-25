@@ -126,7 +126,28 @@
       "Bash(pnpm --filter @hako/landing typecheck)",
       "Bash(grep -rn \"closeTestModule\\\\|getTestModule\\\\|from.*create-test-module\\\\|from.*scraper-utils.service\\\\|from.*scraper.service\\\\|from.*scraper.interface\\\\|from ''\\\\.\\\\/.*\\\\.scraper''\" /c/Users/Pau/dev/hako/apps/api/src/modules/ --include=\"*.spec.ts\" -l)",
       "Bash(pnpm --filter @hako/trpc build)",
-      "Bash(pnpm --filter @hako/trpc typecheck)"
+      "Bash(pnpm --filter @hako/trpc typecheck)",
+      "Bash(pnpm --filter @hako/db generate)",
+      "Bash(pnpm --filter @hako/db build)",
+      "Bash(./node_modules/.bin/prisma generate:*)",
+      "Bash(/c/Users/Pau/dev/hako/apps/api/node_modules/.bin/prisma generate:*)",
+      "Bash(find /c/Users/Pau/dev/hako/node_modules/.pnpm -name *_tmp* -type f)",
+      "Bash(npx prisma@5.22.0 generate)",
+      "Bash(pnpm store:*)",
+      "Bash(/c/Users/Pau/dev/hako/packages/db/node_modules/.bin/tsc)",
+      "Bash(node_modules/typescript/bin/tsc)",
+      "Bash(./node_modules/.bin/tsc)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(for i:*)",
+      "Bash(do pnpm:*)",
+      "Bash(done)",
+      "Bash(pnpm fetch:*)",
+      "Bash(pnpm run:*)",
+      "Bash(pnpm -w run typecheck)",
+      "Bash(pnpm -w run lint)",
+      "Bash(pnpm -w run format)",
+      "Bash(pnpm --filter @hako/trpc test)",
+      "Bash(find /c/Users/Pau/dev/hako/packages/trpc -name global*setup*)"
     ]
   }
 }
