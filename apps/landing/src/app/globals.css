@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  /* ─── Typography ─────────────────────────────────────────────────── */
+  --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* ─── Warm Stone (neutral base, barely warm) ─────────────────────── */
+  --color-stone-50: #fafaf8;
+  --color-stone-100: #f4f2ee;
+  --color-stone-200: #eae6df;
+  --color-stone-300: #d8d2c9;
+  --color-stone-400: #b5ada3;
+  --color-stone-500: #8c837a;
+  --color-stone-600: #635c54;
+  --color-stone-700: #312d29; /* dark border / divider       */
+  --color-stone-800: #1e1c19; /* dark card / surface          */
+  --color-stone-900: #131110; /* dark page background         */
+  --color-stone-950: #0c0b0a; /* dark deepest bg / sidebar    */
+
+  /* ─── Accent (terracota / Anthropic-orange) ──────────────────────── */
+  --color-accent-50: #fef3ec;
+  --color-accent-100: #fbe0cc;
+  --color-accent-200: #f6be99;
+  --color-accent-300: #ee9567;
+  --color-accent-400: #e07042;
+  --color-accent-500: #c95829;
+  --color-accent-600: #a3431c;
+  --color-accent-700: #7a3011;
+  --color-accent-900: #351105;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 180ms ease-out both;
+  }
+}

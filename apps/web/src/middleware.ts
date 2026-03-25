@@ -33,6 +33,10 @@ export function middleware(request: NextRequest) {
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   const isAuthPage = AUTH_PATHS.some((p) => pathname.startsWith(p));
 
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL(hasSession ? '/inbox' : '/login', request.url));
+  }
+
   if (isProtected && !hasSession) {
     return NextResponse.redirect(new URL('/login', request.url));
   }

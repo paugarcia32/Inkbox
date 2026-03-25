@@ -8,6 +8,8 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-50">
@@ -17,13 +19,13 @@ export default function HomePage() {
           <span className="text-lg font-bold tracking-tight">hako</span>
           <nav className="flex items-center gap-2">
             <Link
-              href="/login"
+              href={`${appUrl}/login`}
               className="px-3 py-1.5 text-sm font-medium text-stone-600 dark:text-stone-400 transition hover:text-stone-900 dark:hover:text-stone-100"
             >
               Log in
             </Link>
             <Link
-              href="/register"
+              href={`${appUrl}/register`}
               className="rounded-lg bg-accent-500 px-3.5 py-1.5 text-sm font-semibold text-white transition hover:bg-accent-600"
             >
               Get started
@@ -46,13 +48,13 @@ export default function HomePage() {
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link
-            href="/register"
+            href={`${appUrl}/register`}
             className="rounded-lg bg-accent-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-600"
           >
             Start for free
           </Link>
           <Link
-            href="/login"
+            href={`${appUrl}/login`}
             className="rounded-lg border border-stone-200 dark:border-stone-700 px-5 py-2.5 text-sm font-medium text-stone-700 dark:text-stone-300 transition hover:border-stone-300 dark:hover:border-stone-600 hover:bg-stone-100 dark:hover:bg-stone-800"
           >
             Sign in
@@ -127,7 +129,7 @@ export default function HomePage() {
             Save now. Read when it matters.
           </p>
           <Link
-            href="/register"
+            href={`${appUrl}/register`}
             className="rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-600"
           >
             Get started →
