@@ -19,6 +19,7 @@ export function getCaller(userId?: string, rateLimiters: RateLimiters | null = n
     scraperService: createScraperService(),
     req: { ip: null, headers: {} } as MockReq,
     rateLimiters,
+    scrapeQueue: null,
   };
 
   return appRouter.createCaller(ctx as Parameters<typeof appRouter.createCaller>[0]);

@@ -1,4 +1,6 @@
-import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import type { ScrapeJobData } from '@hako/shared';
+import type { Queue } from 'bullmq';
+import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { truncateAll } from '../../test/helpers/db';
 import { createTestCollection, createTestItem, createTestUser } from '../../test/helpers/factories';
 import { prisma } from '../../test/helpers/prisma';
@@ -20,7 +22,7 @@ describe('ItemsService', () => {
   describe('create', () => {
     it('creates an item with correct userId and url', async () => {
       const user = await createTestUser();
-      const item = await service.create(user.id, { url: 'https://example.com/article' });
+      const item = await service.create(user.id, { url: 'https://example.com/article' }, null);
 
       expect(item.userId).toBe(user.id);
       expect(item.url).toBe('https://example.com/article');
@@ -28,7 +30,7 @@ describe('ItemsService', () => {
 
     it('defaults type to "link" and status to "pending"', async () => {
       const user = await createTestUser();
-      const item = await service.create(user.id, { url: 'https://example.com' });
+      const item = await service.create(user.id, { url: 'https://example.com' }, null);
 
       expect(item.type).toBe('link');
       expect(item.status).toBe('pending');
@@ -38,10 +40,14 @@ describe('ItemsService', () => {
       const user = await createTestUser();
       const collection = await createTestCollection(user.id);
 
-      const item = await service.create(user.id, {
-        url: 'https://example.com',
-        collectionId: collection.id,
-      });
+      const item = await service.create(
+        user.id,
+        {
+          url: 'https://example.com',
+          collectionId: collection.id,
+        },
+        null,
+      );
 
       const link = await prisma.collectionItem.findFirst({
         where: { itemId: item.id, collectionId: collection.id },
@@ -51,10 +57,37 @@ describe('ItemsService', () => {
 
     it('does not create a CollectionItem when no collectionId is provided', async () => {
       const user = await createTestUser();
-      const item = await service.create(user.id, { url: 'https://example.com' });
+      const item = await service.create(user.id, { url: 'https://example.com' }, null);
 
       const links = await prisma.collectionItem.findMany({ where: { itemId: item.id } });
       expect(links).toHaveLength(0);
+    });
+
+    it('enqueues a scrape job when scrapeQueue is provided', async () => {
+      const user = await createTestUser();
+      const mockQueue = { add: vi.fn().mockResolvedValue(undefined) };
+
+      const item = await service.create(
+        user.id,
+        { url: 'https://example.com' },
+        mockQueue as unknown as Queue<ScrapeJobData>,
+      );
+
+      expect(mockQueue.add).toHaveBeenCalledOnce();
+      expect(mockQueue.add).toHaveBeenCalledWith(
+        'scrape',
+        { itemId: item.id, url: 'https://example.com', userId: user.id },
+        expect.objectContaining({ attempts: 3 }),
+      );
+    });
+
+    it('does not enqueue when scrapeQueue is null', async () => {
+      const user = await createTestUser();
+      const mockQueue = { add: vi.fn() };
+
+      await service.create(user.id, { url: 'https://example.com' }, null);
+
+      expect(mockQueue.add).not.toHaveBeenCalled();
     });
   });
 

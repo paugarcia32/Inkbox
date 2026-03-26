@@ -1,5 +1,6 @@
 import { appRouter } from '@hako/trpc';
 import { trpcServer } from '@hono/trpc-server';
+import { Queue } from 'bullmq';
 import { RateLimiterMemory, RateLimiterRedis } from 'rate-limiter-flexible';
 import { auth } from './auth.js';
 import { prisma } from './db.js';
@@ -11,6 +12,9 @@ function makeRedisLimiter(keyPrefix: string, points: number) {
     ? new RateLimiterRedis({ storeClient: redis, points, duration: 60, keyPrefix })
     : new RateLimiterMemory({ points, duration: 60 });
 }
+
+// Queue name must match QUEUES.SCRAPE in packages/shared/src/queues.ts
+const scrapeQueue = redis ? new Queue('scrape', { connection: redis }) : null;
 
 const rateLimiters = {
   protected: makeRedisLimiter('rl:protected', 120),
@@ -28,6 +32,6 @@ export const trpcHandler = trpcServer({
     c.req.raw.headers.forEach((value, key) => {
       headers[key] = value;
     });
-    return { userId, prisma, scraperService, req: { ip, headers }, rateLimiters };
+    return { userId, prisma, scraperService, req: { ip, headers }, rateLimiters, scrapeQueue };
   },
 });

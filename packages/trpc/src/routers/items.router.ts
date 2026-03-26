@@ -24,7 +24,7 @@ export const itemsRouter = router({
   create: scraperProcedure
     .input(z.object({ url: z.string().url(), collectionId: z.string().optional() }))
     .mutation(({ ctx, input }) =>
-      new ItemsService(ctx.prisma, ctx.scraperService).create(ctx.userId, input),
+      new ItemsService(ctx.prisma, ctx.scraperService).create(ctx.userId, input, ctx.scrapeQueue),
     ),
 
   update: protectedProcedure

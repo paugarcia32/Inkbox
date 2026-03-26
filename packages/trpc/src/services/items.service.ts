@@ -1,5 +1,12 @@
 import type { PrismaClient } from '@hako/db';
-import type { CreateItemInput, Item, ItemCollection, UpdateItemInput } from '@hako/shared';
+import type {
+  CreateItemInput,
+  Item,
+  ItemCollection,
+  ScrapeJobData,
+  UpdateItemInput,
+} from '@hako/shared';
+import type { Queue } from 'bullmq';
 import { Logger } from '../logger';
 import type { ScraperService } from './scraper.service';
 
@@ -67,7 +74,7 @@ export class ItemsService {
     private readonly scraper: ScraperService,
   ) {}
 
-  async create(userId: string, input: CreateItemInput) {
+  async create(userId: string, input: CreateItemInput, scrapeQueue: Queue<ScrapeJobData> | null) {
     const item = await this.prisma.item.create({
       data: { userId, url: input.url },
     });
@@ -78,7 +85,16 @@ export class ItemsService {
       });
     }
 
-    void this.scrapeAndUpdate(item.id, input.url);
+    if (scrapeQueue) {
+      await scrapeQueue.add(
+        'scrape',
+        { itemId: item.id, url: item.url, userId },
+        { attempts: 3, backoff: { type: 'exponential', delay: 30_000 } },
+      );
+    } else {
+      void this.scrapeAndUpdate(item.id, input.url);
+    }
+
     return item;
   }
 
