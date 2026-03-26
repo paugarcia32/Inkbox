@@ -1,3 +1,4 @@
+import type { RateLimiters } from '../../src/context';
 import { appRouter } from '../../src/routers/_app';
 import { ScraperUtilsService } from '../../src/services/scraper-utils.service';
 import { ScraperService } from '../../src/services/scraper.service';
@@ -11,12 +12,13 @@ function createScraperService() {
   return new ScraperService([new GenericScraperService(utils)]);
 }
 
-export function getCaller(userId?: string) {
+export function getCaller(userId?: string, rateLimiters: RateLimiters | null = null) {
   const ctx = {
     userId: userId ?? '',
     prisma,
     scraperService: createScraperService(),
     req: { ip: null, headers: {} } as MockReq,
+    rateLimiters,
   };
 
   return appRouter.createCaller(ctx as Parameters<typeof appRouter.createCaller>[0]);

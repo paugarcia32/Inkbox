@@ -1,13 +1,21 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { RateLimiterMemory, RateLimiterRes } from 'rate-limiter-flexible';
+import { RateLimiterMemory, RateLimiterRedis, RateLimiterRes } from 'rate-limiter-flexible';
 import { auth } from './auth.js';
 import { prisma } from './db.js';
+import { redis } from './redis.js';
 import { trpcHandler } from './trpc-handler.js';
 
 const isProd = process.env.NODE_ENV === 'production';
-const limiter = new RateLimiterMemory({ points: isProd ? 60 : 300, duration: 60 });
+const limiter = redis
+  ? new RateLimiterRedis({
+      storeClient: redis,
+      points: isProd ? 60 : 300,
+      duration: 60,
+      keyPrefix: 'rl:global',
+    })
+  : new RateLimiterMemory({ points: isProd ? 60 : 300, duration: 60 });
 
 const app = new Hono();
 

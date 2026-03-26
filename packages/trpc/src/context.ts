@@ -1,4 +1,5 @@
 import type { PrismaClient } from '@hako/db';
+import type { RateLimiterAbstract } from 'rate-limiter-flexible';
 import type { ScraperService } from './services/scraper.service';
 
 export type AppRequest = {
@@ -6,11 +7,18 @@ export type AppRequest = {
   ip: string | null;
 };
 
+export type RateLimiters = {
+  protected: RateLimiterAbstract;
+  scraper: RateLimiterAbstract;
+  public: RateLimiterAbstract;
+};
+
 export type Context = {
   userId: string;
   prisma: PrismaClient;
   scraperService: ScraperService;
   req: AppRequest;
+  rateLimiters: RateLimiters;
 };
 
 export type PublicContext = {
@@ -18,4 +26,5 @@ export type PublicContext = {
   prisma: PrismaClient;
   scraperService: ScraperService;
   req: AppRequest;
+  rateLimiters: RateLimiters | null;
 };

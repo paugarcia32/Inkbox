@@ -156,7 +156,14 @@
       "Bash(sed -i 's|\"\"@hako/config/nextjs\"\"|\"\"@hako/shared/config/nextjs\"\"|g' apps/web/tsconfig.json apps/landing/tsconfig.json)",
       "Bash(find node_modules/.pnpm -name *oxide*win32*)",
       "Bash(rm -rf dist)",
-      "Bash(pnpm build:*)"
+      "Bash(pnpm build:*)",
+      "Bash(find /c/Users/Pau/dev/hako/packages/server/src -type f -name *.ts ! -path */node_modules/*)",
+      "Bash(find /c/Users/Pau/dev/hako/packages/trpc/src -type f -name *.ts ! -path */node_modules/*)",
+      "Bash(find . -type d -not -path */node_modules* -not -path */.next* -not -path */dist* -not -path */.turbo*)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\Pau\\\\dev\\\\hako\\\\docs\\\\improvements\\\\phase-1\")",
+      "Bash(mkdir -p /c/Users/Pau/dev/hako/docs/improvements/phase-1)",
+      "Bash(node -e \"const io = require\\(''C:/Users/Pau/dev/hako/node_modules/ioredis''\\); console.log\\(Object.keys\\(io\\).slice\\(0,10\\)\\)\")",
+      "Bash(ls C:/Users/Pau/dev/hako/node_modules/.pnpm/ioredis*/node_modules/ioredis/built/index.d.ts)"
     ]
   }
 }

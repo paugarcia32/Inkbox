@@ -1,8 +1,6 @@
 export { appRouter } from './routers/_app';
-// Internal — exported for testing only
-export { _protectedLimiter, _scraperLimiter, _publicLimiter } from './trpc';
 export type { AppRouter } from './routers/_app';
-export type { Context, PublicContext } from './context';
+export type { Context, PublicContext, RateLimiters } from './context';
 
 // Services — exported for use in workers and tests
 export { ItemsService } from './services/items.service';
