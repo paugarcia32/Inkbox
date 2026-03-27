@@ -12,7 +12,7 @@ export { ScraperUtilsService } from './services/scraper-utils.service';
 export type { ScrapeResult, IScraper } from './services/scraper.interface';
 
 // Scraper strategies — exported so the API can instantiate them
-export { GenericScraperService } from './services/strategies/generic.scraper';
+export { MetascraperGenericStrategy } from './services/strategies/metascraper-generic.scraper';
 export { TwitterScraperService } from './services/strategies/twitter.scraper';
 export { YoutubeScraperService } from './services/strategies/youtube.scraper';
 export { PinterestScraperService } from './services/strategies/pinterest.scraper';

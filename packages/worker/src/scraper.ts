@@ -1,7 +1,7 @@
 import {
   DribbbleScraperService,
-  GenericScraperService,
   InstagramScraperService,
+  MetascraperGenericStrategy,
   PinterestScraperService,
   ScraperService,
   ScraperUtilsService,
@@ -19,5 +19,5 @@ export const scraperService = new ScraperService([
   new DribbbleScraperService(utils),
   new TikTokScraperService(utils),
   new InstagramScraperService(utils),
-  new GenericScraperService(utils),
+  new MetascraperGenericStrategy(utils),
 ]);
